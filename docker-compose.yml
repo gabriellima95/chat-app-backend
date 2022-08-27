@@ -1,0 +1,15 @@
+version: '3.7'
+
+services:
+  db:
+    image: postgres
+    volumes:
+      - ./docker/postgres-multiple-databases.sh:/docker-entrypoint-initdb.d/postgres-multiple-databases.sh
+    restart: always
+    hostname: msn
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_MULTIPLE_DATABASES=msn,msn_test

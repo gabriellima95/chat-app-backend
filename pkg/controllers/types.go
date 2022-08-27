@@ -1,0 +1,46 @@
+package controllers
+
+import "time"
+
+type UserRequestSchema struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+type UserResponseSchema struct {
+	ID       string `json:"id"`
+	Username string `json:"username"`
+	// Token    string `json:"token"`
+}
+
+type LoginResponseSchema struct {
+	Token string `json:"token"`
+	// Password string `json:"password"`
+}
+
+// type ChatRequestSchema struct {
+// 	Chatname string `json:"username"`
+// 	Password string `json:"password"`
+// }
+
+type ChatResponseSchema struct {
+	ID            string             `json:"id"`
+	LastMessage   string             `json:"last_message"`
+	LastMessageAt time.Time          `json:"last_message_at"`
+	User          UserResponseSchema `json:"user"`
+	Contact       UserResponseSchema `json:"contact"`
+}
+
+type MessageRequestSchema struct {
+	Content  string `json:"content"`
+	ChatID   string `json:"chat_id"`
+	SenderID string `json:"sender_id"`
+}
+
+type MessageResponseSchema struct {
+	ID        string    `json:"id"`
+	CreatedAt time.Time `json:"created_at"`
+	Content   string    `json:"content"`
+	ChatID    string    `json:"chat_id"`
+	SenderID  string    `json:"sender_id"`
+}
