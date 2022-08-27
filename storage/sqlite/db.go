@@ -1,6 +1,8 @@
 package sqlite
 
 import (
+	"msn/pkg/models"
+
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -13,9 +15,9 @@ func SetupDatabase() *gorm.DB {
 		panic("failed to connect database")
 	}
 
-	db.AutoMigrate(&User{})
-	db.AutoMigrate(&Chat{})
-	db.AutoMigrate(&Message{})
+	db.AutoMigrate(&models.User{})
+	db.AutoMigrate(&models.Chat{})
+	db.AutoMigrate(&models.Message{})
 
 	// db.AutoMigrate(&models.Message{})
 
