@@ -80,7 +80,6 @@ func TestPostgresChatRepository(t *testing.T) {
 		postgres.DB.Exec("DELETE FROM chats")
 		postgres.DB.Exec("DELETE FROM users")
 		chat := &models.Chat{
-			ID:            uuid.New(),
 			User1ID:       uuid.New(),
 			User2ID:       uuid.New(),
 			LastMessageAt: time.Now(),
@@ -97,13 +96,7 @@ func TestPostgresChatRepository(t *testing.T) {
 	t.Run("case=must-not-save-chat-with-non-nullable-fields-as-nil", func(t *testing.T) {
 		postgres.DB.Exec("DELETE FROM chats")
 		postgres.DB.Exec("DELETE FROM users")
-		chat := &models.Chat{
-			ID: uuid.New(),
-			// User1ID:       uuid.New(),
-			// User2ID:       uuid.New(),
-			// LastMessageAt: time.Now(),
-			// LastMessage:   "oie",
-		}
+		chat := &models.Chat{}
 
 		err := chatRepository.Create(chat)
 
@@ -117,19 +110,16 @@ func TestPostgresChatRepository(t *testing.T) {
 		postgres.DB.Exec("DELETE FROM chats")
 		postgres.DB.Exec("DELETE FROM users")
 		user1 := models.User{
-			ID:       uuid.New(),
 			Username: "111",
 			Password: "111",
 		}
 		user2 := models.User{
-			ID:       uuid.New(),
 			Username: "222",
 			Password: "222",
 		}
 		userRepository.Create(&user1)
 		userRepository.Create(&user2)
 		chat := &models.Chat{
-			ID:            uuid.New(),
 			User1ID:       user1.ID,
 			User2ID:       user2.ID,
 			LastMessageAt: time.Now(),
@@ -155,17 +145,14 @@ func TestPostgresChatRepository(t *testing.T) {
 		postgres.DB.Exec("DELETE FROM chats")
 		postgres.DB.Exec("DELETE FROM users")
 		user1 := models.User{
-			ID:       uuid.New(),
 			Username: "111",
 			Password: "111",
 		}
 		user2 := models.User{
-			ID:       uuid.New(),
 			Username: "222",
 			Password: "222",
 		}
 		user3 := models.User{
-			ID:       uuid.New(),
 			Username: "333",
 			Password: "333",
 		}
@@ -173,21 +160,18 @@ func TestPostgresChatRepository(t *testing.T) {
 		userRepository.Create(&user2)
 		userRepository.Create(&user3)
 		chat1 := &models.Chat{
-			ID:            uuid.New(),
 			User1ID:       user1.ID,
 			User2ID:       user2.ID,
 			LastMessageAt: time.Now(),
 			LastMessage:   "oie",
 		}
 		chat2 := &models.Chat{
-			ID:            uuid.New(),
 			User1ID:       user3.ID,
 			User2ID:       user1.ID,
 			LastMessageAt: time.Now(),
 			LastMessage:   "oie",
 		}
 		chat3 := &models.Chat{
-			ID:            uuid.New(),
 			User1ID:       user2.ID,
 			User2ID:       user3.ID,
 			LastMessageAt: time.Now(),
@@ -237,19 +221,16 @@ func TestPostgresChatRepository(t *testing.T) {
 		postgres.DB.Exec("DELETE FROM chats")
 		postgres.DB.Exec("DELETE FROM users")
 		user1 := models.User{
-			ID:       uuid.New(),
 			Username: "111",
 			Password: "111",
 		}
 		user2 := models.User{
-			ID:       uuid.New(),
 			Username: "222",
 			Password: "222",
 		}
 		userRepository.Create(&user1)
 		userRepository.Create(&user2)
 		chat := &models.Chat{
-			ID:            uuid.New(),
 			User1ID:       user1.ID,
 			User2ID:       user2.ID,
 			LastMessageAt: time.Now(),
