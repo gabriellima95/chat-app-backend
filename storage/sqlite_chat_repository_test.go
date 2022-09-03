@@ -9,7 +9,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func TestChatRepository(t *testing.T) {
+func TestSQLiteChatRepository(t *testing.T) {
 	db := sqlite.SetupDatabase()
 	chatRepository := NewChatRepository(db)
 	userRepository := NewUserRepository(db)
@@ -55,7 +55,6 @@ func TestChatRepository(t *testing.T) {
 			Password: "222",
 		}
 		chat := &models.Chat{
-			ID:            uuid.New(),
 			User1:         user1,
 			User2:         user2,
 			LastMessageAt: time.Now(),
@@ -99,7 +98,6 @@ func TestChatRepository(t *testing.T) {
 		sqlite.DB.Exec("DELETE FROM chats")
 		sqlite.DB.Exec("DELETE FROM users")
 		chat := &models.Chat{
-			ID: uuid.New(),
 			// User1ID:       uuid.New(),
 			// User2ID:       uuid.New(),
 			// LastMessageAt: time.Now(),
@@ -118,19 +116,16 @@ func TestChatRepository(t *testing.T) {
 		sqlite.DB.Exec("DELETE FROM chats")
 		sqlite.DB.Exec("DELETE FROM users")
 		user1 := models.User{
-			ID:       uuid.New(),
 			Username: "111",
 			Password: "111",
 		}
 		user2 := models.User{
-			ID:       uuid.New(),
 			Username: "222",
 			Password: "222",
 		}
 		userRepository.Create(&user1)
 		userRepository.Create(&user2)
 		chat := &models.Chat{
-			ID:            uuid.New(),
 			User1ID:       user1.ID,
 			User2ID:       user2.ID,
 			LastMessageAt: time.Now(),
@@ -156,27 +151,23 @@ func TestChatRepository(t *testing.T) {
 		sqlite.DB.Exec("DELETE FROM chats")
 		sqlite.DB.Exec("DELETE FROM users")
 		user := models.User{
-			ID:       uuid.New(),
 			Username: "111",
 			Password: "111",
 		}
 		userRepository.Create(&user)
 		chat1 := &models.Chat{
-			ID:            uuid.New(),
 			User1ID:       user.ID,
 			User2ID:       uuid.New(),
 			LastMessageAt: time.Now(),
 			LastMessage:   "oie",
 		}
 		chat2 := &models.Chat{
-			ID:            uuid.New(),
 			User1ID:       uuid.New(),
 			User2ID:       user.ID,
 			LastMessageAt: time.Now(),
 			LastMessage:   "oie",
 		}
 		chat3 := &models.Chat{
-			ID:            uuid.New(),
 			User1ID:       uuid.New(),
 			User2ID:       uuid.New(),
 			LastMessageAt: time.Now(),
@@ -226,19 +217,16 @@ func TestChatRepository(t *testing.T) {
 		sqlite.DB.Exec("DELETE FROM chats")
 		sqlite.DB.Exec("DELETE FROM users")
 		user1 := models.User{
-			ID:       uuid.New(),
 			Username: "111",
 			Password: "111",
 		}
 		user2 := models.User{
-			ID:       uuid.New(),
 			Username: "222",
 			Password: "222",
 		}
 		userRepository.Create(&user1)
 		userRepository.Create(&user2)
 		chat := &models.Chat{
-			ID:            uuid.New(),
 			User1ID:       user1.ID,
 			User2ID:       user2.ID,
 			LastMessageAt: time.Now(),
@@ -265,14 +253,12 @@ func TestChatRepository(t *testing.T) {
 		userID := uuid.New()
 		timestamp := time.Now()
 		beforeChat := &models.Chat{
-			ID:            uuid.New(),
 			User1ID:       userID,
 			User2ID:       uuid.New(),
 			LastMessageAt: timestamp,
 			LastMessage:   "oie",
 		}
 		afterChat := &models.Chat{
-			ID:            uuid.New(),
 			User1ID:       uuid.New(),
 			User2ID:       userID,
 			LastMessageAt: timestamp.Add(1 * time.Second),
