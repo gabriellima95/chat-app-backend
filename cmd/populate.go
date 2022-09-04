@@ -16,7 +16,11 @@ var populateCmd = &cobra.Command{
 	Short: "Populate DB with random data",
 	Long:  `Populate DB with random data`,
 	Run: func(cmd *cobra.Command, args []string) {
-		data.Populate()
+		database := "sqlite"
+		if len(args) == 1 && args[0] == "postgres" {
+			database = "postgres"
+		}
+		data.Populate(database)
 	},
 }
 

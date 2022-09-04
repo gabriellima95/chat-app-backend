@@ -5,15 +5,22 @@ import (
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 
 	"msn/pkg/models"
 	"msn/storage"
+	"msn/storage/postgres"
 	"msn/storage/sqlite"
 )
 
-func Populate() {
+func Populate(database string) {
+	var db *gorm.DB
+	if database == "postgres" {
+		db = postgres.SetupDatabase()
+	} else {
+		db = sqlite.SetupDatabase()
+	}
 
-	db := sqlite.SetupDatabase()
 	userRepository := storage.NewUserRepository(db)
 	chatRepository := storage.NewChatRepository(db)
 	messageRepository := storage.NewMessageRepository(db)
@@ -102,8 +109,13 @@ func Populate() {
 	messageRepository.Create(&m6)
 }
 
-func Clear() {
-	db := sqlite.SetupDatabase()
+func Clear(database string) {
+	var db *gorm.DB
+	if database == "postgres" {
+		db = postgres.SetupDatabase()
+	} else {
+		db = sqlite.SetupDatabase()
+	}
 	db.Exec("DELETE FROM chats")
 	db.Exec("DELETE FROM users")
 	db.Exec("DELETE FROM messages")

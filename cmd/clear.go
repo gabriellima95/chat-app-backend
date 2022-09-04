@@ -16,7 +16,11 @@ var clearCmd = &cobra.Command{
 	Short: "Clears DB data",
 	Long:  `Clears DB data`,
 	Run: func(cmd *cobra.Command, args []string) {
-		data.Clear()
+		database := "sqlite"
+		if len(args) == 1 && args[0] == "postgres" {
+			database = "postgres"
+		}
+		data.Clear(database)
 	},
 }
 

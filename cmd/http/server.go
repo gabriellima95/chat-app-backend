@@ -10,7 +10,7 @@ import (
 
 	"msn/pkg/controllers"
 	"msn/storage"
-	"msn/storage/sqlite"
+	"msn/storage/postgres"
 
 	ws "msn/websocket"
 )
@@ -35,7 +35,7 @@ func handleRequests(userController controllers.UserController, chatController co
 
 func Serve() {
 
-	db := sqlite.SetupDatabase()
+	db := postgres.SetupDatabase()
 	userRepository := storage.NewUserRepository(db)
 	chatRepository := storage.NewChatRepository(db)
 	messageRepository := storage.NewMessageRepository(db)
