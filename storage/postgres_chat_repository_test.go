@@ -10,8 +10,8 @@ import (
 )
 
 func TestPostgresChatRepository(t *testing.T) {
-	db := postgres.SetupDatabase()
 	postgres.Testing = true
+	db := postgres.SetupDatabase()
 	chatRepository := NewChatRepository(db)
 	userRepository := NewUserRepository(db)
 
