@@ -12,7 +12,7 @@ var DB *gorm.DB
 var Testing bool = false
 
 func SetupDatabase() *gorm.DB {
-	host := "localhost"
+	host := "db"
 	user := "root"
 	password := "root"
 	dbname := "chat"

@@ -1,6 +1,7 @@
 package http
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -18,6 +19,10 @@ import (
 func handleRequests(userController controllers.UserController, chatController controllers.ChatController, messageController controllers.MessageController, dataController controllers.DataController) {
 
 	myRouter := mux.NewRouter().StrictSlash(true)
+	myRouter.HandleFunc("/app-info", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println("OK")
+		json.NewEncoder(w).Encode("OK")
+	}).Methods("GET")
 	myRouter.HandleFunc("/signup", userController.Signup).Methods("POST")
 	myRouter.HandleFunc("/login", userController.Login).Methods("POST")
 	myRouter.HandleFunc("/users/{user_id}/ws", userController.ConnectSocket).Methods("GET")
