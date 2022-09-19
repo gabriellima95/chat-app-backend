@@ -32,17 +32,17 @@ func (d DataController) Populate(w http.ResponseWriter, r *http.Request) {
 	paulo := models.User{
 		ID:       userID,
 		Username: "paulo",
-		Password: "paulo",
+		Password: hashAndSalt("paulo"),
 	}
 	gabriel := models.User{
 		ID:       uuid.New(),
 		Username: "gabriel",
-		Password: "gabriel",
+		Password: hashAndSalt("gabriel"),
 	}
 	matheus := models.User{
 		ID:       uuid.New(),
 		Username: "matheus",
-		Password: "matheus",
+		Password: hashAndSalt("matheus"),
 	}
 	d.userRepository.Create(&paulo)
 	d.userRepository.Create(&gabriel)
@@ -125,4 +125,14 @@ func (d DataController) Populate(w http.ResponseWriter, r *http.Request) {
 	d.messageRepository.Create(&m6)
 
 	json.NewEncoder(w).Encode("")
+}
+
+func (d DataController) Clear(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
+	DB := d.chatRepository.DB
+	DB.Exec("DELETE FROM messages")
+	DB.Exec("DELETE FROM chats")
+	DB.Exec("DELETE FROM users")
 }

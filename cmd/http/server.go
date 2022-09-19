@@ -30,6 +30,7 @@ func handleRequests(userController controllers.UserController, chatController co
 	myRouter.HandleFunc("/{chat_id}/messages", messageController.ListMessages).Methods("GET")
 	myRouter.HandleFunc("/messages", messageController.CreateMessage).Methods("POST")
 	myRouter.HandleFunc("/data", dataController.Populate).Methods("POST")
+	myRouter.HandleFunc("/data", dataController.Clear).Methods("DELETE")
 	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})
 	originsOk := handlers.AllowedOrigins([]string{"*"})
 	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
