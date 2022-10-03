@@ -13,6 +13,9 @@ var Testing bool = false
 
 func SetupDatabase() *gorm.DB {
 	host := "db"
+	if Testing {
+		host = "localhost"
+	}
 	user := "root"
 	password := "root"
 	dbname := "chat"
@@ -29,6 +32,7 @@ func SetupDatabase() *gorm.DB {
 	db.AutoMigrate(&models.User{})
 	db.AutoMigrate(&models.Chat{})
 	db.AutoMigrate(&models.Message{})
+	db.AutoMigrate(&models.GenericChat{})
 
 	// db.AutoMigrate(&models.Message{})
 

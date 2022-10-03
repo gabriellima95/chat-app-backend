@@ -42,6 +42,33 @@ type Message struct {
 	DeletedAt time.Time
 }
 
+type GenericChat struct {
+	// ID            uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();not null;primaryKey"`
+	ID            uuid.UUID `gorm:"not null;default:null;primaryKey"`
+	Name          string    `gorm:"default:null"`
+	LastMessage   string    `gorm:"not null;default:null"`
+	LastMessageAt time.Time `gorm:"not null;default:null"`
+	IsGroup       bool      `gorm:"not null;default:null"`
+	Users         []User    `gorm:"many2many:user_chats;"`
+	CreatedAt     time.Time
+	UpdatedAt     time.Time
+	DeletedAt     time.Time
+}
+
+func (chat *GenericChat) GetName(userID uuid.UUID) string {
+	if chat.IsGroup {
+		return chat.Name
+	}
+
+	for _, user := range chat.Users {
+		if userID != user.ID {
+			return user.Username
+		}
+	}
+
+	return ""
+}
+
 // type User struct {
 // 	gorm.Model
 // 	Nickname string

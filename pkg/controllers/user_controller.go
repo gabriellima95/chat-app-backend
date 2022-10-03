@@ -81,6 +81,7 @@ func (c UserController) Signup(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c UserController) Login(w http.ResponseWriter, r *http.Request) {
+	log.Printf("UserController.Login", r)
 	var userPayload UserRequestSchema
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
