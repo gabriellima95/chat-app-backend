@@ -9,9 +9,10 @@ import (
 type User struct {
 	// ID        uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();not null;primaryKey"`
 	// Nickname  string    `gorm:"not null;default:null;primaryKey"`
-	ID        uuid.UUID `gorm:"not null;default:null;primaryKey"`
-	Username  string    `gorm:"not null;unique;default:null"`
-	Password  string    `gorm:"not null;default:null"`
+	ID        uuid.UUID     `gorm:"not null;default:null;primaryKey"`
+	Username  string        `gorm:"not null;unique;default:null"`
+	Password  string        `gorm:"not null;default:null"`
+	Chats     []GenericChat `gorm:"many2many:user_chats;"`
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt time.Time

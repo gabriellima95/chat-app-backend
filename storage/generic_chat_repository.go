@@ -23,15 +23,6 @@ func (r GenericChatRepository) Create(chat *models.GenericChat) error {
 	return r.DB.Create(chat).Error
 }
 
-// func (r GenericChatRepository) ListByUserID(id uuid.UUID) ([]models.GenericChat, error) {
-// 	var chats []models.GenericChat
-// 	err := r.DB.Preload("Users").Where("user1_id = ? OR user2_id = ?", id.String(), id.String()).Order("last_message_at desc").Find(&chats).Error
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	return chats, nil
-// }
-
 func (r GenericChatRepository) Update(chat *models.GenericChat) error {
 	err := r.DB.Save(chat).Error
 	if err != nil {

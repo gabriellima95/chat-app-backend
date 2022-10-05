@@ -33,3 +33,14 @@ func (r UserRepository) GetByUsername(username string) (*models.User, error) {
 
 	return &user, nil
 }
+
+func (r UserRepository) GetByID(id uuid.UUID) (*models.User, error) {
+	var user models.User
+	err := r.DB.Preload("Chats").First(&user, "id = ?", id).Error
+	if err != nil {
+		log.Printf("Failed to run GetByID error: %v", err)
+		return nil, err
+	}
+
+	return &user, nil
+}

@@ -138,10 +138,10 @@ func TestSQLiteChatRepository(t *testing.T) {
 		if err != nil {
 			t.Errorf("Error saving chat: %v", err)
 		}
-		if chat.User1 != emptyUser {
+		if chat.User1.ID != emptyUser.ID {
 			t.Errorf("Should not populate users")
 		}
-		if chat.User2 != emptyUser {
+		if chat.User2.ID != emptyUser.ID {
 			t.Errorf("Should not populate users")
 		}
 	})
