@@ -3,6 +3,7 @@ package storage
 import (
 	"log"
 	"msn/pkg/models"
+	"sort"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -41,4 +42,20 @@ func (r GenericChatRepository) GetByID(id uuid.UUID) (*models.GenericChat, error
 		return nil, err
 	}
 	return &chat, nil
+}
+
+func (r GenericChatRepository) ListByUserID(id uuid.UUID) ([]models.GenericChat, error) {
+	var user models.User
+	err := r.DB.Preload("Chats.Users").First(&user, "id = ?", id).Error
+	if err == gorm.ErrRecordNotFound {
+		return []models.GenericChat{}, nil
+	}
+	if err != nil {
+		log.Printf("Failed to run ListByUserID error: %v", err)
+		return nil, err
+	}
+	listedChats := user.Chats
+	sort.Slice(listedChats, func(i, j int) bool { return listedChats[i].LastMessageAt.After(listedChats[j].LastMessageAt) })
+
+	return listedChats, nil
 }
