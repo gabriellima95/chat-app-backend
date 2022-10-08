@@ -33,6 +33,7 @@ func TestPostgresGenericChatRepositoryCreate(t *testing.T) {
 			Name:          "grupo",
 			LastMessageAt: time.Now(),
 			LastMessage:   "oie",
+			LastSenderID:  uuid.New(),
 			IsGroup:       true,
 			Users:         []models.User{user1, user2},
 		}
@@ -66,6 +67,7 @@ func TestPostgresGenericChatRepositoryCreate(t *testing.T) {
 			LastMessageAt: time.Now(),
 			LastMessage:   "chat com nome vazio",
 			IsGroup:       true,
+			LastSenderID:  uuid.New(),
 		}
 
 		err := chatRepository.Create(chat)
@@ -93,6 +95,7 @@ func TestPostgresGenericChatRepositoryCreate(t *testing.T) {
 			Name:          "grupo",
 			LastMessageAt: time.Now(),
 			LastMessage:   "oie",
+			LastSenderID:  uuid.New(),
 			IsGroup:       true,
 			Users:         []models.User{user1, user2},
 		}
@@ -123,6 +126,7 @@ func TestPostgresGenericChatRepositoryCreate(t *testing.T) {
 			Name:          "grupo",
 			LastMessageAt: time.Now(),
 			LastMessage:   "oie",
+			LastSenderID:  uuid.New(),
 			IsGroup:       true,
 			Users:         []models.User{user1, user2},
 		}
@@ -147,6 +151,7 @@ func TestPostgresGenericChatRepositoryCreate(t *testing.T) {
 			Name:          "grupo",
 			LastMessageAt: time.Now(),
 			LastMessage:   "oie",
+			LastSenderID:  uuid.New(),
 			IsGroup:       true,
 			Users:         []models.User{user},
 		}
@@ -190,6 +195,7 @@ func TestPostgresGenericChatRepositoryGetByID(t *testing.T) {
 			Name:          "grupo",
 			LastMessageAt: time.Now(),
 			LastMessage:   "oie",
+			LastSenderID:  uuid.New(),
 			IsGroup:       true,
 			Users:         []models.User{user1, user2},
 		}
@@ -223,6 +229,7 @@ func TestPostgresGenericChatRepositoryGetByID(t *testing.T) {
 			Name:          "grupo",
 			LastMessageAt: time.Now(),
 			LastMessage:   "oie",
+			LastSenderID:  uuid.New(),
 			IsGroup:       true,
 			Users:         []models.User{user1, user2},
 		}
@@ -280,6 +287,7 @@ func TestPostgresGenericChatRepositoryUpdate(t *testing.T) {
 			Name:          "grupo",
 			LastMessageAt: timestamp,
 			LastMessage:   "oie",
+			LastSenderID:  uuid.New(),
 			IsGroup:       true,
 			Users:         []models.User{user},
 		}
@@ -336,6 +344,7 @@ func TestPostgresGenericChatRepositoryListByUserID(t *testing.T) {
 			Name:          "grupo1",
 			LastMessageAt: time.Now(),
 			LastMessage:   "oie",
+			LastSenderID:  uuid.New(),
 			IsGroup:       true,
 			Users:         []models.User{user1, user2},
 		}
@@ -343,6 +352,7 @@ func TestPostgresGenericChatRepositoryListByUserID(t *testing.T) {
 			Name:          "grupo2",
 			LastMessageAt: time.Now(),
 			LastMessage:   "oie",
+			LastSenderID:  uuid.New(),
 			IsGroup:       true,
 			Users:         []models.User{user1, user3},
 		}
@@ -350,6 +360,7 @@ func TestPostgresGenericChatRepositoryListByUserID(t *testing.T) {
 			Name:          "grupo3",
 			LastMessageAt: time.Now(),
 			LastMessage:   "oie",
+			LastSenderID:  uuid.New(),
 			IsGroup:       true,
 			Users:         []models.User{user2, user3},
 		}
@@ -395,6 +406,7 @@ func TestPostgresGenericChatRepositoryListByUserID(t *testing.T) {
 			Name:          "grupo1",
 			LastMessageAt: time.Now(),
 			LastMessage:   "oie",
+			LastSenderID:  uuid.New(),
 			IsGroup:       true,
 			Users:         []models.User{user1, user2},
 		}
@@ -447,6 +459,7 @@ func TestPostgresGenericChatRepositoryListByUserID(t *testing.T) {
 			Name:          "beforeChat",
 			LastMessageAt: time.Now(),
 			LastMessage:   "oie",
+			LastSenderID:  uuid.New(),
 			IsGroup:       true,
 			Users:         []models.User{user},
 		}
@@ -454,6 +467,7 @@ func TestPostgresGenericChatRepositoryListByUserID(t *testing.T) {
 			Name:          "afterChat",
 			LastMessageAt: time.Now().Add(5 * time.Second),
 			LastMessage:   "oie",
+			LastSenderID:  uuid.New(),
 			IsGroup:       true,
 			Users:         []models.User{user},
 		}

@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -48,6 +49,7 @@ type GenericChat struct {
 	ID            uuid.UUID `gorm:"not null;default:null;primaryKey"`
 	Name          string    `gorm:"default:null"`
 	LastMessage   string    `gorm:"not null;default:null"`
+	LastSenderID  uuid.UUID `gorm:"not null;default:null"`
 	LastMessageAt time.Time `gorm:"not null;default:null"`
 	IsGroup       bool      `gorm:"not null;default:null"`
 	Users         []User    `gorm:"many2many:user_chats;"`
@@ -61,13 +63,33 @@ func (chat *GenericChat) GetName(userID uuid.UUID) string {
 		return chat.Name
 	}
 
+	var username string
 	for _, user := range chat.Users {
 		if userID != user.ID {
-			return user.Username
+			username = user.Username
 		}
 	}
 
-	return ""
+	return username
+}
+
+func (chat *GenericChat) GetLastMessage(userID uuid.UUID) string {
+	if !chat.IsGroup {
+		return chat.LastMessage
+	}
+
+	if userID == chat.LastSenderID {
+		return fmt.Sprintf("Eu: %s", chat.LastMessage)
+	}
+
+	var username string
+	for _, user := range chat.Users {
+		if userID != user.ID {
+			username = user.Username
+		}
+	}
+
+	return fmt.Sprintf("%s: %s", username, chat.LastMessage)
 }
 
 // type User struct {
