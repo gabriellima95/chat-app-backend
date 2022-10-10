@@ -25,11 +25,17 @@ type LoginResponseSchema struct {
 
 type ChatResponseSchema struct {
 	ID            string             `json:"id"`
-	Name          string             `json:"name"`
 	LastMessage   string             `json:"last_message"`
 	LastMessageAt time.Time          `json:"last_message_at"`
 	User          UserResponseSchema `json:"user"`
 	Contact       UserResponseSchema `json:"contact"`
+}
+
+type GenericChatResponseSchema struct {
+	ID            string    `json:"id"`
+	Name          string    `json:"name"`
+	LastMessage   string    `json:"last_message"`
+	LastMessageAt time.Time `json:"last_message_at"`
 }
 
 type MessageRequestSchema struct {

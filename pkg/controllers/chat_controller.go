@@ -91,9 +91,9 @@ func (c ChatController) ListGenericChats(w http.ResponseWriter, r *http.Request)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	var chatListResponse []ChatResponseSchema
+	var chatListResponse []GenericChatResponseSchema
 	for _, chat := range chats {
-		c := ChatResponseSchema{
+		c := GenericChatResponseSchema{
 			ID:            chat.ID.String(),
 			LastMessage:   chat.GetLastMessage(userID),
 			Name:          chat.GetName(userID),
