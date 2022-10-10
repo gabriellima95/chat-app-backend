@@ -44,13 +44,14 @@ func Serve() {
 	db := postgres.SetupDatabase()
 	userRepository := storage.NewUserRepository(db)
 	chatRepository := storage.NewChatRepository(db)
+	genericChatRepository := storage.NewGenericChatRepository(db)
 	messageRepository := storage.NewMessageRepository(db)
 	socketNotifier := ws.NewSocketNotifier()
 
 	userController := controllers.NewUserController(userRepository, socketNotifier)
-	chatController := controllers.NewChatController(chatRepository)
+	chatController := controllers.NewChatController(chatRepository, genericChatRepository)
 	messageController := controllers.NewMessageController(messageRepository, chatRepository, socketNotifier)
 
-	dataController := controllers.NewDataController(chatRepository, userRepository, messageRepository)
+	dataController := controllers.NewDataController(chatRepository, userRepository, messageRepository, genericChatRepository)
 	handleRequests(userController, chatController, messageController, dataController)
 }

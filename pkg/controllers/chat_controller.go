@@ -10,12 +10,14 @@ import (
 )
 
 type ChatController struct {
-	chatRepository storage.ChatRepository
+	chatRepository        storage.ChatRepository
+	genericChatRepository storage.GenericChatRepository
 }
 
-func NewChatController(chatRepository storage.ChatRepository) ChatController {
+func NewChatController(chatRepository storage.ChatRepository, genericChatRepository storage.GenericChatRepository) ChatController {
 	return ChatController{
-		chatRepository: chatRepository,
+		chatRepository:        chatRepository,
+		genericChatRepository: genericChatRepository,
 	}
 }
 
@@ -64,6 +66,38 @@ func (c ChatController) ListChats(w http.ResponseWriter, r *http.Request) {
 				Username: chat.User1.Username,
 			}
 
+		}
+		chatListResponse = append(chatListResponse, c)
+	}
+
+	json.NewEncoder(w).Encode(chatListResponse)
+}
+
+func (c ChatController) ListGenericChats(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
+	params := mux.Vars(r)
+	ID := params["user_id"]
+
+	userID, err := uuid.Parse(ID)
+	if err != nil {
+		http.Error(w, "userID should be valid uuid", http.StatusBadRequest)
+		return
+	}
+
+	chats, err := c.genericChatRepository.ListByUserID(userID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	var chatListResponse []ChatResponseSchema
+	for _, chat := range chats {
+		c := ChatResponseSchema{
+			ID:            chat.ID.String(),
+			LastMessage:   chat.GetLastMessage(userID),
+			Name:          chat.GetName(userID),
+			LastMessageAt: chat.LastMessageAt,
 		}
 		chatListResponse = append(chatListResponse, c)
 	}
