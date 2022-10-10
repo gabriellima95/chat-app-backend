@@ -84,7 +84,7 @@ func (chat *GenericChat) GetLastMessage(userID uuid.UUID) string {
 
 	var username string
 	for _, user := range chat.Users {
-		if userID != user.ID {
+		if chat.LastSenderID == user.ID {
 			username = user.Username
 		}
 	}
