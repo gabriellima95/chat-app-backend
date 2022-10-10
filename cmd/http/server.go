@@ -27,6 +27,7 @@ func handleRequests(userController controllers.UserController, chatController co
 	myRouter.HandleFunc("/login", userController.Login).Methods("POST")
 	myRouter.HandleFunc("/users/{user_id}/ws", userController.ConnectSocket).Methods("GET")
 	myRouter.HandleFunc("/{user_id}/chats", controllers.AuthMiddleware(chatController.ListChats)).Methods("GET")
+	myRouter.HandleFunc("/{user_id}/generic_chats", chatController.ListGenericChats).Methods("GET")
 	myRouter.HandleFunc("/{chat_id}/messages", messageController.ListMessages).Methods("GET")
 	myRouter.HandleFunc("/messages", messageController.CreateMessage).Methods("POST")
 	myRouter.HandleFunc("/data", dataController.Populate).Methods("POST")
