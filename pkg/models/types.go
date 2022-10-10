@@ -51,7 +51,7 @@ type GenericChat struct {
 	LastMessage   string    `gorm:"not null;default:null"`
 	LastSenderID  uuid.UUID `gorm:"not null;default:null"`
 	LastMessageAt time.Time `gorm:"not null;default:null"`
-	IsGroup       bool      `gorm:"not null;default:null"`
+	IsGroup       bool      `gorm:"not null;"`
 	Users         []User    `gorm:"many2many:user_chats;"`
 	CreatedAt     time.Time
 	UpdatedAt     time.Time

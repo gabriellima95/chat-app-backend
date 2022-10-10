@@ -45,6 +45,31 @@ func TestPostgresGenericChatRepositoryCreate(t *testing.T) {
 		}
 	})
 
+	t.Run("case=must-save-new-chat-with-false-boolean", func(t *testing.T) {
+		postgres.DB.Exec("DELETE FROM user_chats")
+		postgres.DB.Exec("DELETE FROM generic_chats")
+		postgres.DB.Exec("DELETE FROM users")
+		user := models.User{
+			ID:       uuid.New(),
+			Username: "111",
+			Password: "111",
+		}
+		chat := &models.GenericChat{
+			Name:          "grupo",
+			LastMessageAt: time.Now(),
+			LastMessage:   "oie",
+			LastSenderID:  uuid.New(),
+			IsGroup:       false,
+			Users:         []models.User{user},
+		}
+
+		err := chatRepository.Create(chat)
+
+		if err != nil {
+			t.Errorf("Error saving chat: %v", err)
+		}
+	})
+
 	t.Run("case=must-not-save-chat-with-non-nullable-fields-as-nil", func(t *testing.T) {
 		postgres.DB.Exec("DELETE FROM user_chats")
 		postgres.DB.Exec("DELETE FROM generic_chats")
