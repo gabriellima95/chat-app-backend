@@ -115,6 +115,7 @@ func PopulateDB(userRepository storage.UserRepository, chatRepository storage.Ch
 
 	newChatgroup := models.GenericChat{
 		Name:          "azilados",
+		IsGroup:       true,
 		LastMessage:   "ow yeah",
 		LastSenderID:  paulo.ID,
 		LastMessageAt: time.Now(),
@@ -215,10 +216,10 @@ func Clear(database string) {
 
 func ClearDB(db *gorm.DB) {
 	db.Exec("DELETE FROM chats")
-	db.Exec("DELETE FROM users")
-	db.Exec("DELETE FROM messages")
 	db.Exec("DELETE FROM user_chats")
 	db.Exec("DELETE FROM generic_chats")
+	db.Exec("DELETE FROM users")
+	db.Exec("DELETE FROM messages")
 }
 
 func hashAndSalt(password string) string {
