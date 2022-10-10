@@ -23,8 +23,13 @@ func Populate(database string) {
 
 	userRepository := storage.NewUserRepository(db)
 	chatRepository := storage.NewChatRepository(db)
+	// genericChatRepository := storage.NewGenericChatRepository(db)
 	messageRepository := storage.NewMessageRepository(db)
 
+	PopulateDB(userRepository, chatRepository, messageRepository)
+}
+
+func PopulateDB(userRepository storage.UserRepository, chatRepository storage.ChatRepository, messageRepository storage.MessageRepository) {
 	paulo := models.User{
 		Username: "paulo",
 		Password: hashAndSalt("paulo"),
@@ -116,9 +121,15 @@ func Clear(database string) {
 	} else {
 		db = sqlite.SetupDatabase()
 	}
+	ClearDB(db)
+}
+
+func ClearDB(db *gorm.DB) {
 	db.Exec("DELETE FROM chats")
 	db.Exec("DELETE FROM users")
 	db.Exec("DELETE FROM messages")
+	db.Exec("DELETE FROM user_chats")
+	db.Exec("DELETE FROM generic_chats")
 }
 
 func hashAndSalt(password string) string {
