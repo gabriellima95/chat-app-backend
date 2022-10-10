@@ -23,13 +23,13 @@ func Populate(database string) {
 
 	userRepository := storage.NewUserRepository(db)
 	chatRepository := storage.NewChatRepository(db)
-	// genericChatRepository := storage.NewGenericChatRepository(db)
+	genericChatRepository := storage.NewGenericChatRepository(db)
 	messageRepository := storage.NewMessageRepository(db)
 
-	PopulateDB(userRepository, chatRepository, messageRepository)
+	PopulateDB(userRepository, chatRepository, messageRepository, genericChatRepository)
 }
 
-func PopulateDB(userRepository storage.UserRepository, chatRepository storage.ChatRepository, messageRepository storage.MessageRepository) {
+func PopulateDB(userRepository storage.UserRepository, chatRepository storage.ChatRepository, messageRepository storage.MessageRepository, genericChatRepository storage.GenericChatRepository) {
 	paulo := models.User{
 		Username: "paulo",
 		Password: hashAndSalt("paulo"),
@@ -112,6 +112,95 @@ func PopulateDB(userRepository storage.UserRepository, chatRepository storage.Ch
 	messageRepository.Create(&m4)
 	messageRepository.Create(&m5)
 	messageRepository.Create(&m6)
+
+	newChatgroup := models.GenericChat{
+		Name:          "azilados",
+		LastMessage:   "ow yeah",
+		LastSenderID:  paulo.ID,
+		LastMessageAt: time.Now(),
+		Users:         []models.User{paulo, gabriel, matheus},
+	}
+	newChatpg := models.GenericChat{
+		LastMessage:   "top",
+		LastSenderID:  paulo.ID,
+		LastMessageAt: time.Now(),
+		IsGroup:       false,
+		Users:         []models.User{paulo, gabriel},
+	}
+	newChatpm := models.GenericChat{
+		LastMessage:   "massa",
+		LastSenderID:  matheus.ID,
+		LastMessageAt: time.Now(),
+		IsGroup:       false,
+		Users:         []models.User{paulo, matheus},
+	}
+	newChatgm := models.GenericChat{
+		LastMessage:   "irado",
+		LastSenderID:  gabriel.ID,
+		LastMessageAt: time.Now(),
+		IsGroup:       false,
+		Users:         []models.User{gabriel, matheus},
+	}
+
+	genericChatRepository.Create(&newChatgroup)
+	genericChatRepository.Create(&newChatpg)
+	genericChatRepository.Create(&newChatpm)
+	genericChatRepository.Create(&newChatgm)
+
+	mm1 := models.Message{
+		Content:  "fwdgedfg",
+		ChatID:   newChatpg.ID,
+		SenderID: paulo.ID,
+	}
+	mm2 := models.Message{
+		Content:  "dfgsfhfcvnc",
+		ChatID:   newChatpg.ID,
+		SenderID: gabriel.ID,
+	}
+	mm3 := models.Message{
+		Content:  "sdvdfhdf",
+		ChatID:   newChatgm.ID,
+		SenderID: gabriel.ID,
+	}
+	mm4 := models.Message{
+		Content:  "asdfdfhdfgb",
+		ChatID:   newChatgm.ID,
+		SenderID: matheus.ID,
+	}
+	mm5 := models.Message{
+		Content:  "fgdfghdfghd",
+		ChatID:   newChatpm.ID,
+		SenderID: paulo.ID,
+	}
+	mm6 := models.Message{
+		Content:  "fgdfghdfghd",
+		ChatID:   newChatpm.ID,
+		SenderID: matheus.ID,
+	}
+	mm7 := models.Message{
+		Content:  "wrtefrgefh",
+		ChatID:   newChatgroup.ID,
+		SenderID: matheus.ID,
+	}
+	mm8 := models.Message{
+		Content:  "dsfgsgdfs",
+		ChatID:   newChatgroup.ID,
+		SenderID: gabriel.ID,
+	}
+	mm9 := models.Message{
+		Content:  "gedfbdef",
+		ChatID:   newChatgroup.ID,
+		SenderID: paulo.ID,
+	}
+	messageRepository.Create(&mm1)
+	messageRepository.Create(&mm2)
+	messageRepository.Create(&mm3)
+	messageRepository.Create(&mm4)
+	messageRepository.Create(&mm5)
+	messageRepository.Create(&mm6)
+	messageRepository.Create(&mm7)
+	messageRepository.Create(&mm8)
+	messageRepository.Create(&mm9)
 }
 
 func Clear(database string) {
