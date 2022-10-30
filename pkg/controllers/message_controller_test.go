@@ -21,14 +21,14 @@ import (
 func TestMessageController(t *testing.T) {
 	db := sqlite.SetupDatabase()
 	messageRepository := storage.NewMessageRepository(db)
+	cleaner := storage.NewCleaner(db)
 	chatRepository := storage.NewChatRepository(db)
 	genericChatRepository := storage.NewGenericChatRepository(db)
 	notifierMock := &websocket.NotifierMock{}
 	messageController := NewMessageController(messageRepository, chatRepository, genericChatRepository, notifierMock)
 
 	t.Run("case=must-create-message", func(t *testing.T) {
-		sqlite.DB.Exec("DELETE FROM messages")
-		sqlite.DB.Exec("DELETE FROM chats")
+		cleaner.Clean()
 		chat := &models.Chat{
 			User1ID:       uuid.New(),
 			User2ID:       uuid.New(),
@@ -73,7 +73,7 @@ func TestMessageController(t *testing.T) {
 	})
 
 	t.Run("case=must-return-error-creating-message-when-passing-invalid-uuid-in-chat-id", func(t *testing.T) {
-		sqlite.DB.Exec("DELETE FROM messages")
+		cleaner.Clean()
 
 		content := "content"
 		chatID := "123"
@@ -96,7 +96,7 @@ func TestMessageController(t *testing.T) {
 	})
 
 	t.Run("case=must-return-error-creating-message-when-passing-invalid-uuid-in-sender-id", func(t *testing.T) {
-		sqlite.DB.Exec("DELETE FROM messages")
+		cleaner.Clean()
 
 		content := "content"
 		chatID := uuid.NewString()
@@ -119,7 +119,7 @@ func TestMessageController(t *testing.T) {
 	})
 
 	t.Run("case=must-list-messages", func(t *testing.T) {
-		sqlite.DB.Exec("DELETE FROM messages")
+		cleaner.Clean()
 		message := &models.Message{
 			ID:       uuid.New(),
 			Content:  "Hello",
@@ -160,8 +160,7 @@ func TestMessageController(t *testing.T) {
 	})
 
 	t.Run("case=after-creating-message-must-update-chat", func(t *testing.T) {
-		sqlite.DB.Exec("DELETE FROM messages")
-		sqlite.DB.Exec("DELETE FROM chats")
+		cleaner.Clean()
 		chat := &models.Chat{
 			User1ID:       uuid.New(),
 			User2ID:       uuid.New(),
@@ -202,8 +201,7 @@ func TestMessageController(t *testing.T) {
 	})
 
 	t.Run("case=must-call-notifier-twice-with-correct-params", func(t *testing.T) {
-		sqlite.DB.Exec("DELETE FROM messages")
-		sqlite.DB.Exec("DELETE FROM chats")
+		cleaner.Clean()
 		chat := &models.Chat{
 			User1ID:       uuid.New(),
 			User2ID:       uuid.New(),

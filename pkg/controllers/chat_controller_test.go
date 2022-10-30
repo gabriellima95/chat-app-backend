@@ -18,14 +18,14 @@ import (
 
 func TestChatController(t *testing.T) {
 	db := sqlite.SetupDatabase()
+	cleaner := storage.NewCleaner(db)
 	chatRepository := storage.NewChatRepository(db)
 	genericChatRepository := storage.NewGenericChatRepository(db)
 	userRepository := storage.NewUserRepository(db)
 	chatController := NewChatController(chatRepository, genericChatRepository)
 
 	t.Run("case=must-list-chats", func(t *testing.T) {
-		sqlite.DB.Exec("DELETE FROM chats")
-		sqlite.DB.Exec("DELETE FROM users")
+		cleaner.Clean()
 		user1 := models.User{
 			Username: "111",
 			Password: "111",
@@ -87,8 +87,7 @@ func TestChatController(t *testing.T) {
 	})
 
 	t.Run("case=must-list-chats-with-query-param-user-as-user-and-user2-as-contact", func(t *testing.T) {
-		sqlite.DB.Exec("DELETE FROM chats")
-		sqlite.DB.Exec("DELETE FROM users")
+		cleaner.Clean()
 		user1 := models.User{
 			Username: "111",
 			Password: "111",
@@ -150,8 +149,7 @@ func TestChatController(t *testing.T) {
 	})
 
 	t.Run("case=must-return-error-listing-chats-when-passing-invalid-uuid", func(t *testing.T) {
-		sqlite.DB.Exec("DELETE FROM chats")
-		sqlite.DB.Exec("DELETE FROM users")
+		cleaner.Clean()
 		userID := "123"
 		url := "/" + userID + "/chats"
 		vars := map[string]string{
@@ -173,15 +171,14 @@ func TestChatController(t *testing.T) {
 func TestChatControllerListGenericChats(t *testing.T) {
 	postgres.Testing = true
 	db := postgres.SetupDatabase()
+	cleaner := storage.NewCleaner(db)
 	chatRepository := storage.NewChatRepository(db)
 	genericChatRepository := storage.NewGenericChatRepository(db)
 
 	chatController := NewChatController(chatRepository, genericChatRepository)
 
 	t.Run("case=must-list-chats", func(t *testing.T) {
-		postgres.DB.Exec("DELETE FROM user_chats")
-		postgres.DB.Exec("DELETE FROM generic_chats")
-		postgres.DB.Exec("DELETE FROM users")
+		cleaner.Clean()
 		user1 := models.User{
 			ID:       uuid.New(),
 			Username: "111",
@@ -271,9 +268,7 @@ func TestChatControllerListGenericChats(t *testing.T) {
 	})
 
 	t.Run("case=must-return-error-listing-chats-when-passing-invalid-uuid", func(t *testing.T) {
-		postgres.DB.Exec("DELETE FROM user_chats")
-		postgres.DB.Exec("DELETE FROM generic_chats")
-		postgres.DB.Exec("DELETE FROM users")
+		cleaner.Clean()
 		userID := "123"
 		url := "/" + userID + "/chats"
 		vars := map[string]string{

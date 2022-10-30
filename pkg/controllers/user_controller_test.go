@@ -18,12 +18,13 @@ import (
 
 func TestUserController(t *testing.T) {
 	db := sqlite.SetupDatabase()
+	cleaner := storage.NewCleaner(db)
 	userRepository := storage.NewUserRepository(db)
 	notifierMock := &websocket.NotifierMock{}
 	userController := NewUserController(userRepository, notifierMock)
 
 	t.Run("case=signup-must-save-new-user", func(t *testing.T) {
-		sqlite.DB.Exec("DELETE FROM users")
+		cleaner.Clean()
 		username := "abc"
 		password := "def"
 		jsonMap := map[string]string{"username": username, "password": password}
