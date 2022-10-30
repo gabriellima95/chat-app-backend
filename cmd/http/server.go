@@ -51,7 +51,7 @@ func Serve() {
 
 	userController := controllers.NewUserController(userRepository, socketNotifier)
 	chatController := controllers.NewChatController(chatRepository, genericChatRepository)
-	messageController := controllers.NewMessageController(messageRepository, chatRepository, socketNotifier)
+	messageController := controllers.NewMessageController(messageRepository, chatRepository, genericChatRepository, socketNotifier)
 
 	dataController := controllers.NewDataController(chatRepository, userRepository, messageRepository, genericChatRepository)
 	handleRequests(userController, chatController, messageController, dataController)
