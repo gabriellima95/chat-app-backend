@@ -9,6 +9,7 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 
+	"msn/cmd/worker"
 	"msn/pkg/controllers"
 	"msn/storage"
 	"msn/storage/postgres"
@@ -48,6 +49,9 @@ func Serve() {
 	genericChatRepository := storage.NewGenericChatRepository(db)
 	messageRepository := storage.NewMessageRepository(db)
 	socketNotifier := ws.NewSocketNotifier()
+
+	notificationWorker := worker.NewNotificationWorker(socketNotifier)
+	go notificationWorker.Run()
 
 	userController := controllers.NewUserController(userRepository, socketNotifier)
 	chatController := controllers.NewChatController(chatRepository, genericChatRepository)
