@@ -31,6 +31,7 @@ func handleRequests(userController controllers.UserController, chatController co
 	myRouter.HandleFunc("/{user_id}/generic_chats", chatController.ListGenericChats).Methods("GET")
 	myRouter.HandleFunc("/{chat_id}/messages", messageController.ListMessages).Methods("GET")
 	myRouter.HandleFunc("/messages", messageController.CreateMessage).Methods("POST")
+	myRouter.HandleFunc("/generic_messages", messageController.CreateGenericMessage).Methods("POST")
 	myRouter.HandleFunc("/data", dataController.Populate).Methods("POST")
 	myRouter.HandleFunc("/data", dataController.Clear).Methods("DELETE")
 	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})
