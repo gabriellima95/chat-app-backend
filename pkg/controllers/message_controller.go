@@ -27,9 +27,10 @@ func NewMessageController(
 	socketNotifier websocket.Notifier,
 ) MessageController {
 	return MessageController{
-		messageRepository: messageRepository,
-		chatRepository:    chatRepository,
-		socketNotifier:    socketNotifier,
+		messageRepository:     messageRepository,
+		chatRepository:        chatRepository,
+		socketNotifier:        socketNotifier,
+		genericChatRepository: genericChatRepository,
 	}
 }
 
@@ -143,6 +144,7 @@ func (m MessageController) CreateGenericMessage(w http.ResponseWriter, r *http.R
 		return
 	}
 	chat.LastMessage = message.Content
+	chat.LastSenderID = senderID
 	chat.LastMessageAt = message.CreatedAt
 
 	err = m.genericChatRepository.Update(chat)

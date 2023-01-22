@@ -287,7 +287,7 @@ func TestCreateGenericMessage(t *testing.T) {
 		}
 		chat := &models.GenericChat{
 			LastMessageAt: time.Now().Add(15 * time.Second),
-			IsGroup:       false,
+			IsGroup:       true,
 			LastMessage:   "chat1",
 			LastSenderID:  user1.ID,
 			Users:         []models.User{user1, user2, user3},
@@ -306,7 +306,7 @@ func TestCreateGenericMessage(t *testing.T) {
 		req := httptest.NewRequest(http.MethodPost, "/message", &b)
 		w := httptest.NewRecorder()
 
-		messageController.CreateMessage(w, req)
+		messageController.CreateGenericMessage(w, req)
 
 		responseBody := map[string]interface{}{}
 		if w.Code != 200 {
@@ -345,7 +345,7 @@ func TestCreateGenericMessage(t *testing.T) {
 		req := httptest.NewRequest(http.MethodPost, "/message", &b)
 		w := httptest.NewRecorder()
 
-		messageController.CreateMessage(w, req)
+		messageController.CreateGenericMessage(w, req)
 
 		if w.Code != 400 {
 			t.Errorf("Error listing chats: response status code is not 400")
@@ -368,7 +368,7 @@ func TestCreateGenericMessage(t *testing.T) {
 		req := httptest.NewRequest(http.MethodPost, "/message", &b)
 		w := httptest.NewRecorder()
 
-		messageController.CreateMessage(w, req)
+		messageController.CreateGenericMessage(w, req)
 
 		if w.Code != 400 {
 			t.Errorf("Error listing chats: response status code is not 400")
@@ -378,17 +378,33 @@ func TestCreateGenericMessage(t *testing.T) {
 	t.Run("case=after-creating-message-must-update-chat", func(t *testing.T) {
 		cleaner.Clean()
 
-		chat := &models.Chat{
-			User1ID:       uuid.New(),
-			User2ID:       uuid.New(),
-			LastMessageAt: time.Now().Add(60 * time.Second),
-			LastMessage:   "oie",
+		user1 := models.User{
+			ID:       uuid.New(),
+			Username: "josias",
+			Password: "111",
 		}
-		chatRepository.Create(chat)
+		user2 := models.User{
+			ID:       uuid.New(),
+			Username: "jezebel",
+			Password: "222",
+		}
+		user3 := models.User{
+			ID:       uuid.New(),
+			Username: "jiraldo",
+			Password: "333",
+		}
+		chat := &models.GenericChat{
+			LastMessageAt: time.Now().Add(15 * time.Second),
+			IsGroup:       true,
+			LastMessage:   "hello",
+			LastSenderID:  user1.ID,
+			Users:         []models.User{user1, user2, user3},
+		}
+		genericChatRepository.Create(chat)
 		content := "content"
 		chatID := chat.ID.String()
-		senderID := uuid.NewString()
-		jsonMap := map[string]string{"content": content, "chat_id": chatID, "sender_id": senderID}
+		senderID := user2.ID
+		jsonMap := map[string]string{"content": content, "chat_id": chatID, "sender_id": senderID.String()}
 		var b bytes.Buffer
 		err := json.NewEncoder(&b).Encode(jsonMap)
 		if err != nil {
@@ -398,9 +414,9 @@ func TestCreateGenericMessage(t *testing.T) {
 		req := httptest.NewRequest(http.MethodPost, "/message", &b)
 		w := httptest.NewRecorder()
 
-		messageController.CreateMessage(w, req)
+		messageController.CreateGenericMessage(w, req)
 
-		savedChat, err := chatRepository.GetByID(chat.ID)
+		savedChat, err := genericChatRepository.GetByID(chat.ID)
 		if err != nil {
 			t.Errorf("Error fetching chat")
 		}
@@ -415,22 +431,42 @@ func TestCreateGenericMessage(t *testing.T) {
 		if savedChat.LastMessageAt.Format("2006-01-02 15:04:05") != messageCreatedAt.Format("2006-01-02 15:04:05") {
 			t.Errorf("Chat last message at should be updated")
 		}
+		if savedChat.LastSenderID != user2.ID {
+			t.Errorf("Chat last sender ID should be updated")
+		}
 	})
 
-	t.Run("case=must-call-notifier-twice-with-correct-params", func(t *testing.T) {
+	t.Run("case=must-call-notifier-three-times-with-correct-params", func(t *testing.T) {
 		cleaner.Clean()
+		notifierMock.NotifyMessageCounter = 0
 
-		chat := &models.Chat{
-			User1ID:       uuid.New(),
-			User2ID:       uuid.New(),
-			LastMessageAt: time.Now().Add(60 * time.Second),
-			LastMessage:   "oie",
+		user1 := models.User{
+			ID:       uuid.New(),
+			Username: "josias",
+			Password: "111",
 		}
-		chatRepository.Create(chat)
+		user2 := models.User{
+			ID:       uuid.New(),
+			Username: "jezebel",
+			Password: "222",
+		}
+		user3 := models.User{
+			ID:       uuid.New(),
+			Username: "jiraldo",
+			Password: "333",
+		}
+		chat := &models.GenericChat{
+			LastMessageAt: time.Now().Add(15 * time.Second),
+			IsGroup:       true,
+			LastMessage:   "hello",
+			LastSenderID:  user1.ID,
+			Users:         []models.User{user1, user2, user3},
+		}
+		genericChatRepository.Create(chat)
 		content := "content"
 		chatID := chat.ID.String()
-		senderID := uuid.NewString()
-		jsonMap := map[string]string{"content": content, "chat_id": chatID, "sender_id": senderID}
+		senderID := user2.ID
+		jsonMap := map[string]string{"content": content, "chat_id": chatID, "sender_id": senderID.String()}
 		var b bytes.Buffer
 		err := json.NewEncoder(&b).Encode(jsonMap)
 		if err != nil {
@@ -438,16 +474,22 @@ func TestCreateGenericMessage(t *testing.T) {
 		}
 		var notifierMessage1 models.Message
 		var notifierMessage2 models.Message
+		var notifierMessage3 models.Message
 		var notifierUserID1 string
 		var notifierUserID2 string
+		var notifierUserID3 string
 		notifierMock.NotifyMessageFn = func(message models.Message, userID string) error {
-			if userID == chat.User1ID.String() {
+			if userID == user1.ID.String() {
 				notifierUserID1 = userID
 				notifierMessage1 = message
 			}
-			if userID == chat.User2ID.String() {
+			if userID == user2.ID.String() {
 				notifierUserID2 = userID
 				notifierMessage2 = message
+			}
+			if userID == user3.ID.String() {
+				notifierUserID3 = userID
+				notifierMessage3 = message
 			}
 			return nil
 		}
@@ -455,22 +497,31 @@ func TestCreateGenericMessage(t *testing.T) {
 		req := httptest.NewRequest(http.MethodPost, "/message", &b)
 		w := httptest.NewRecorder()
 
-		messageController.CreateMessage(w, req)
+		messageController.CreateGenericMessage(w, req)
 
-		if notifierUserID1 != chat.User1ID.String() {
+		if notifierUserID1 != user1.ID.String() {
 			t.Errorf("Must notify to User1ID")
 		}
-		if notifierUserID2 != chat.User2ID.String() {
+		if notifierUserID2 != user2.ID.String() {
 			t.Errorf("Must notify to User2ID")
+		}
+		if notifierUserID3 != user3.ID.String() {
+			t.Errorf("Must notify to User3ID")
+		}
+		if notifierMock.NotifyMessageCounter != 3 {
+			t.Errorf("Must notify the correct number of times")
 		}
 		responseBody := map[string]interface{}{}
 		if err := json.Unmarshal([]byte(w.Body.String()), &responseBody); err != nil {
 			t.Errorf("Error deserializing response body")
 		}
-		if notifierMessage1.Content != content || notifierMessage1.SenderID.String() != senderID || notifierMessage1.ChatID.String() != chatID || notifierMessage1.ID.String() != responseBody["id"] {
+		if notifierMessage1.Content != content || notifierMessage1.SenderID != senderID || notifierMessage1.ChatID.String() != chatID || notifierMessage1.ID.String() != responseBody["id"] {
 			t.Errorf("Must notify with correct message params")
 		}
-		if notifierMessage2.Content != content || notifierMessage2.SenderID.String() != senderID || notifierMessage2.ChatID.String() != chatID || notifierMessage2.ID.String() != responseBody["id"] {
+		if notifierMessage2.Content != content || notifierMessage2.SenderID != senderID || notifierMessage2.ChatID.String() != chatID || notifierMessage2.ID.String() != responseBody["id"] {
+			t.Errorf("Must notify with correct message params")
+		}
+		if notifierMessage3.Content != content || notifierMessage3.SenderID != senderID || notifierMessage3.ChatID.String() != chatID || notifierMessage3.ID.String() != responseBody["id"] {
 			t.Errorf("Must notify with correct message params")
 		}
 	})
