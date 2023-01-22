@@ -45,9 +45,10 @@ type MessageRequestSchema struct {
 }
 
 type MessageResponseSchema struct {
-	ID        string    `json:"id"`
-	CreatedAt time.Time `json:"created_at"`
-	Content   string    `json:"content"`
-	ChatID    string    `json:"chat_id"`
-	SenderID  string    `json:"sender_id"`
+	ID         string    `json:"id"`
+	CreatedAt  time.Time `json:"created_at"`
+	Content    string    `json:"content"`
+	ChatID     string    `json:"chat_id"`
+	SenderID   string    `json:"sender_id"`
+	SenderName string    `json:"sender_name"`
 }

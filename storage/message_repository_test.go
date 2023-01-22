@@ -12,6 +12,8 @@ import (
 func TestMessageRepository(t *testing.T) {
 	db := sqlite.SetupDatabase()
 	messageRepository := NewMessageRepository(db)
+	userRepository := NewUserRepository(db)
+	cleaner := NewCleaner(db)
 
 	t.Run("case=must-save-new-message", func(t *testing.T) {
 		sqlite.DB.Exec("DELETE FROM messages")
@@ -62,7 +64,7 @@ func TestMessageRepository(t *testing.T) {
 		messages, err := messageRepository.ListByChatID(savedMessage.ChatID)
 
 		if err != nil {
-			t.Errorf("Error listing chats")
+			t.Errorf("Error listing chats %v", err)
 		}
 
 		if len(messages) != 1 {
@@ -70,6 +72,41 @@ func TestMessageRepository(t *testing.T) {
 		}
 		if messages[0].ID != savedMessage.ID {
 			t.Errorf("Should list saved message %v", messages)
+		}
+	})
+
+	t.Run("case=must-list-messages-returning-the-user", func(t *testing.T) {
+		cleaner.Clean()
+
+		user := &models.User{
+			Username: "111",
+			Password: "111",
+		}
+		userRepository.Create(user)
+		message := &models.Message{
+			Content:  "oie",
+			ChatID:   uuid.New(),
+			SenderID: user.ID,
+		}
+		messageRepository.Create(message)
+
+		messages, err := messageRepository.ListByChatID(message.ChatID)
+
+		if err != nil {
+			t.Errorf("Error listing chats")
+		}
+
+		if len(messages) != 1 {
+			t.Errorf("Should list one message %v", messages)
+		}
+		if messages[0].Sender.Username != user.Username {
+			t.Errorf("Should list saved message %v with populated user username %s", messages, user.Username)
+		}
+		if messages[0].Sender.Password != user.Password {
+			t.Errorf("Should list saved message %v with populated user password %s", messages, user.Password)
+		}
+		if messages[0].Sender.ID != user.ID {
+			t.Errorf("Should list saved message %v with populated user id %s", messages, user.ID.String())
 		}
 	})
 

@@ -39,6 +39,7 @@ type Message struct {
 	Content   string    `gorm:"not null;default:null"`
 	ChatID    uuid.UUID `gorm:"not null;default:null"`
 	SenderID  uuid.UUID `gorm:"not null;default:null"`
+	Sender    User      `gorm:"foreignKey:SenderID"`
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt time.Time

@@ -125,6 +125,7 @@ func TestMessageController(t *testing.T) {
 			Content:  "Hello",
 			ChatID:   uuid.New(),
 			SenderID: uuid.New(),
+			Sender:   models.User{ID: uuid.New(), Username: "josias", Password: "asd"},
 		}
 		messageRepository.Create(message)
 		url := "/" + message.ChatID.String() + "/messages"
@@ -156,6 +157,9 @@ func TestMessageController(t *testing.T) {
 		}
 		if fmt.Sprint(responseMessage["chat_id"]) != message.ChatID.String() {
 			t.Errorf("ChatID field should be %v", message.ChatID.String())
+		}
+		if fmt.Sprint(responseMessage["sender_name"]) != "josias" {
+			t.Errorf("SenderName was %s and field should be %v", responseMessage["sender_name"], "josias")
 		}
 	})
 
