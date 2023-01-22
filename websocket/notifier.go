@@ -61,6 +61,7 @@ func (s *SocketNotifier) NotifyMessage(message models.Message, userID string) er
 	messageMap["sender_id"] = message.SenderID.String()
 	messageMap["created_at"] = message.CreatedAt
 	messageMap["content"] = message.Content
+	messageMap["sender_name"] = message.Sender.Username
 
 	jsonStr, _ := json.Marshal(messageMap)
 
