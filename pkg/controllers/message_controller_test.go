@@ -522,6 +522,15 @@ func TestCreateGenericMessage(t *testing.T) {
 		if notifierMessage1.Content != content || notifierMessage1.SenderID != senderID || notifierMessage1.ChatID.String() != chatID || notifierMessage1.ID.String() != responseBody["id"] {
 			t.Errorf("Must notify with correct message params")
 		}
+		if notifierMessage1.Sender.Username != user2.Username {
+			t.Errorf("Must notify with correct message params: username should be %s and was %s", user2.Username, notifierMessage1.Sender.Username)
+		}
+		if notifierMessage2.Sender.Username != user2.Username {
+			t.Errorf("Must notify with correct message params: username should be %s and was %s", user2.Username, notifierMessage2.Sender.Username)
+		}
+		if notifierMessage3.Sender.Username != user2.Username {
+			t.Errorf("Must notify with correct message params: username should be %s and was %s", user2.Username, notifierMessage3.Sender.Username)
+		}
 		if notifierMessage2.Content != content || notifierMessage2.SenderID != senderID || notifierMessage2.ChatID.String() != chatID || notifierMessage2.ID.String() != responseBody["id"] {
 			t.Errorf("Must notify with correct message params")
 		}

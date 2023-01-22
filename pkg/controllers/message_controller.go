@@ -143,6 +143,13 @@ func (m MessageController) CreateGenericMessage(w http.ResponseWriter, r *http.R
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	for _, user := range chat.Users {
+		if message.SenderID == user.ID {
+			message.Sender = user
+		}
+	}
+
 	chat.LastMessage = message.Content
 	chat.LastSenderID = senderID
 	chat.LastMessageAt = message.CreatedAt
