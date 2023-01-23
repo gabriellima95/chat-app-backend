@@ -1,12 +1,11 @@
 package worker
 
 import (
-	"msn/pkg/models"
 	"msn/websocket"
 )
 
 type NotificationTask struct {
-	Message models.Message
+	Message websocket.MessageNotification
 	UserID  string
 }
 

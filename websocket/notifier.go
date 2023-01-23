@@ -4,15 +4,31 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"msn/pkg/models"
 	"net/http"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 )
 
+type MessageNotification struct {
+	ID          string
+	ChatID      string
+	SenderID    string
+	CreatedAt   time.Time
+	Content     string
+	ChatContent string
+}
+
+// messageMap["id"] = message.ID.String()
+// messageMap["chat_id"] = message.ChatID.String()
+// messageMap["sender_id"] = message.SenderID.String()
+// messageMap["created_at"] = message.CreatedAt
+// messageMap["content"] = message.Content
+// messageMap["sender_name"] = message.Sender.Username
+
 type Notifier interface {
-	NotifyMessage(message models.Message, userID string) error
+	NotifyMessage(message MessageNotification, userID string) error
 	AddConnection(w http.ResponseWriter, r *http.Request, userID uuid.UUID)
 }
 
@@ -47,7 +63,7 @@ func (s *SocketNotifier) AddConnection(w http.ResponseWriter, r *http.Request, u
 	s.clients[userIDstr] = conn
 }
 
-func (s *SocketNotifier) NotifyMessage(message models.Message, userID string) error {
+func (s *SocketNotifier) NotifyMessage(message MessageNotification, userID string) error {
 	fmt.Println("NotifyMessage", s.clients)
 
 	conn, ok := s.clients[userID]
@@ -56,12 +72,12 @@ func (s *SocketNotifier) NotifyMessage(message models.Message, userID string) er
 	}
 
 	messageMap := make(map[string]interface{})
-	messageMap["id"] = message.ID.String()
-	messageMap["chat_id"] = message.ChatID.String()
-	messageMap["sender_id"] = message.SenderID.String()
+	messageMap["id"] = message.ID
+	messageMap["chat_id"] = message.ChatID
+	messageMap["sender_id"] = message.SenderID
 	messageMap["created_at"] = message.CreatedAt
 	messageMap["content"] = message.Content
-	messageMap["sender_name"] = message.Sender.Username
+	messageMap["chat_content"] = message.ChatContent
 
 	jsonStr, _ := json.Marshal(messageMap)
 

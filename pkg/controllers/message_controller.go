@@ -94,8 +94,17 @@ func (m MessageController) CreateMessage(w http.ResponseWriter, r *http.Request)
 		SenderID:  message.SenderID.String(),
 	}
 
-	m.socketNotifier.NotifyMessage(message, chat.User1ID.String())
-	m.socketNotifier.NotifyMessage(message, chat.User2ID.String())
+	messageNotification := websocket.MessageNotification{
+		ID:          message.ID.String(),
+		ChatID:      chat.ID.String(),
+		SenderID:    senderID.String(),
+		CreatedAt:   message.CreatedAt,
+		Content:     message.Content,
+		ChatContent: message.Content,
+	}
+
+	m.socketNotifier.NotifyMessage(messageNotification, chat.User1ID.String())
+	m.socketNotifier.NotifyMessage(messageNotification, chat.User2ID.String())
 
 	json.NewEncoder(w).Encode(messageResponse)
 }
@@ -169,7 +178,15 @@ func (m MessageController) CreateGenericMessage(w http.ResponseWriter, r *http.R
 	}
 
 	for _, user := range chat.Users {
-		err = m.socketNotifier.NotifyMessage(message, user.ID.String())
+		messageNotification := websocket.MessageNotification{
+			ID:          message.ID.String(),
+			ChatID:      chat.ID.String(),
+			SenderID:    senderID.String(),
+			CreatedAt:   message.CreatedAt,
+			Content:     message.Content,
+			ChatContent: chat.GetLastMessage(user.ID),
+		}
+		err = m.socketNotifier.NotifyMessage(messageNotification, user.ID.String())
 		log.Printf("Failed on NotifyMessage for user %s: %v", user.ID.String(), err)
 	}
 

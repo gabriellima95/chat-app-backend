@@ -1,7 +1,6 @@
 package worker
 
 import (
-	"msn/pkg/models"
 	"msn/websocket"
 	"testing"
 
@@ -14,19 +13,19 @@ func TestNotificationWorker(t *testing.T) {
 	notificationWorker := Notification{notifierMock, ch}
 
 	t.Run("case=must-call-notifier-correctly", func(t *testing.T) {
-		var capturedMessage models.Message
+		var capturedMessage websocket.MessageNotification
 		var capturedUserID string
-		notifierMock.NotifyMessageFn = func(message models.Message, userID string) error {
+		notifierMock.NotifyMessageFn = func(message websocket.MessageNotification, userID string) error {
 			capturedMessage = message
 			capturedUserID = userID
 			return nil
 		}
-		id := uuid.New()
-		chatID := uuid.New()
-		senderID := uuid.New()
+		id := uuid.NewString()
+		chatID := uuid.NewString()
+		senderID := uuid.NewString()
 		content := "oie"
 		userID := uuid.NewString()
-		message := models.Message{
+		message := websocket.MessageNotification{
 			ID:       id,
 			Content:  content,
 			ChatID:   chatID,
