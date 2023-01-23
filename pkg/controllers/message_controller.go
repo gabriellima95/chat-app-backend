@@ -185,6 +185,7 @@ func (m MessageController) CreateGenericMessage(w http.ResponseWriter, r *http.R
 			CreatedAt:   message.CreatedAt,
 			Content:     message.Content,
 			ChatContent: chat.GetLastMessage(user.ID),
+			SenderName:  message.Sender.Username,
 		}
 		err = m.socketNotifier.NotifyMessage(messageNotification, user.ID.String())
 		log.Printf("Failed on NotifyMessage for user %s: %v", user.ID.String(), err)

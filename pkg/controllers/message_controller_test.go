@@ -519,15 +519,18 @@ func TestCreateGenericMessage(t *testing.T) {
 		if err := json.Unmarshal([]byte(w.Body.String()), &responseBody); err != nil {
 			t.Errorf("Error deserializing response body")
 		}
-		// if notifierMessage1.Sender.Username != user2.Username {
-		// 	t.Errorf("Must notify with correct message params: username should be %s and was %s", user2.Username, notifierMessage1.Sender.Username)
-		// }
-		// if notifierMessage2.Sender.Username != user2.Username {
-		// 	t.Errorf("Must notify with correct message params: username should be %s and was %s", user2.Username, notifierMessage2.Sender.Username)
-		// }
-		// if notifierMessage3.Sender.Username != user2.Username {
-		// 	t.Errorf("Must notify with correct message params: username should be %s and was %s", user2.Username, notifierMessage3.Sender.Username)
-		// }
+		if notifierMessage1.ChatContent != "jezebel: content" {
+			t.Errorf("Must notify with correct message params: chat content was %s", notifierMessage1.ChatContent)
+		}
+		if notifierMessage2.ChatContent != "Eu: content" {
+			t.Errorf("Must notify with correct message params: chat content was %s", notifierMessage2.ChatContent)
+		}
+		if notifierMessage3.ChatContent != "jezebel: content" {
+			t.Errorf("Must notify with correct message params: chat content was %s", notifierMessage3.ChatContent)
+		}
+		if notifierMessage1.SenderName != "jezebel" || notifierMessage2.SenderName != "jezebel" || notifierMessage3.SenderName != "jezebel" {
+			t.Errorf("Must notify with correct message params: sender name should be jezebel")
+		}
 		if notifierMessage1.Content != content || notifierMessage1.SenderID != senderID.String() || notifierMessage1.ChatID != chatID || notifierMessage1.ID != responseBody["id"] {
 			t.Errorf("Must notify with correct message params")
 		}

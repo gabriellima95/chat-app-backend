@@ -18,6 +18,7 @@ type MessageNotification struct {
 	CreatedAt   time.Time
 	Content     string
 	ChatContent string
+	SenderName  string
 }
 
 // messageMap["id"] = message.ID.String()
@@ -78,6 +79,7 @@ func (s *SocketNotifier) NotifyMessage(message MessageNotification, userID strin
 	messageMap["created_at"] = message.CreatedAt
 	messageMap["content"] = message.Content
 	messageMap["chat_content"] = message.ChatContent
+	messageMap["sender_name"] = message.SenderName
 
 	jsonStr, _ := json.Marshal(messageMap)
 
