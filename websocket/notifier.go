@@ -35,7 +35,7 @@ type Notifier interface {
 
 type SocketNotifier struct {
 	upgrader *websocket.Upgrader
-	clients  map[string]*websocket.Conn
+	connPool map[string]*websocket.Conn
 }
 
 func NewSocketNotifier() *SocketNotifier {
@@ -45,11 +45,11 @@ func NewSocketNotifier() *SocketNotifier {
 	}
 	upgrader.CheckOrigin = func(r *http.Request) bool { return true }
 
-	clients := make(map[string]*websocket.Conn, 0)
+	connPool := make(map[string]*websocket.Conn, 0)
 
 	return &SocketNotifier{
 		upgrader: upgrader,
-		clients:  clients,
+		connPool: connPool,
 	}
 }
 
@@ -61,13 +61,13 @@ func (s *SocketNotifier) AddConnection(w http.ResponseWriter, r *http.Request, u
 		return
 	}
 	userIDstr := userID.String()
-	s.clients[userIDstr] = conn
+	s.connPool[userIDstr] = conn
 }
 
 func (s *SocketNotifier) NotifyMessage(message MessageNotification, userID string) error {
-	fmt.Println("NotifyMessage", s.clients)
+	fmt.Println("NotifyMessage", s.connPool)
 
-	conn, ok := s.clients[userID]
+	conn, ok := s.connPool[userID]
 	if !ok {
 		return fmt.Errorf("user-socket-not-connected")
 	}
