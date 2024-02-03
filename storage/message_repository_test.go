@@ -17,7 +17,7 @@ func TestMessageRepository(t *testing.T) {
 	cleaner := NewCleaner(db)
 
 	t.Run("case=must-save-new-message", func(t *testing.T) {
-		sqlite.DB.Exec("DELETE FROM messages")
+		cleaner.Clean()
 		message := &models.Message{
 			ID:       uuid.New(),
 			Content:  "oie",
@@ -40,7 +40,7 @@ func TestMessageRepository(t *testing.T) {
 	})
 
 	t.Run("case=must-not-save-message-with-non-nullable-fields-as-nil", func(t *testing.T) {
-		sqlite.DB.Exec("DELETE FROM messages")
+		cleaner.Clean()
 		message := &models.Message{
 			ID: uuid.New(),
 		}
@@ -53,7 +53,7 @@ func TestMessageRepository(t *testing.T) {
 	})
 
 	t.Run("case=must-list-messages-with-matching-chat-id", func(t *testing.T) {
-		sqlite.DB.Exec("DELETE FROM messages")
+		cleaner.Clean()
 		savedMessage := &models.Message{
 			ID:       uuid.New(),
 			Content:  "oie",
@@ -112,7 +112,7 @@ func TestMessageRepository(t *testing.T) {
 	})
 
 	t.Run("case=must-return-empty-list-when-no-chats-are-found-with-matching-user-id", func(t *testing.T) {
-		sqlite.DB.Exec("DELETE FROM messages")
+		cleaner.Clean()
 
 		messages, err := messageRepository.ListByChatID(uuid.New())
 
@@ -126,7 +126,7 @@ func TestMessageRepository(t *testing.T) {
 	})
 
 	t.Run("case=must-list-messages-ordered-by-created-at-desc", func(t *testing.T) {
-		sqlite.DB.Exec("DELETE FROM messages")
+		cleaner.Clean()
 		chatID := uuid.New()
 		firstSavedMessage := &models.Message{
 			ID:       uuid.New(),

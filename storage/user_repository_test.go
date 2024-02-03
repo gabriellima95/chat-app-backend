@@ -10,9 +10,10 @@ import (
 func TestUserRepository(t *testing.T) {
 	db := sqlite.SetupDatabase()
 	userRepository := NewUserRepository(db)
+	cleaner := Cleaner{db}
 
 	t.Run("case=must-save-new-user", func(t *testing.T) {
-		sqlite.DB.Exec("DELETE FROM users")
+		cleaner.Clean()
 		user := &models.User{
 			Username: "abc",
 			Password: "abc",
@@ -33,7 +34,7 @@ func TestUserRepository(t *testing.T) {
 	})
 
 	t.Run("case=must-not-save-user-with-non-nullable-fields-as-nil", func(t *testing.T) {
-		sqlite.DB.Exec("DELETE FROM users")
+		cleaner.Clean()
 		user := &models.User{}
 
 		err := userRepository.Create(user)
@@ -44,7 +45,7 @@ func TestUserRepository(t *testing.T) {
 	})
 
 	t.Run("case=must-not-save-user-with-repeated-username", func(t *testing.T) {
-		sqlite.DB.Exec("DELETE FROM users")
+		cleaner.Clean()
 		user := &models.User{
 			Username: "abc",
 			Password: "111",
@@ -66,7 +67,7 @@ func TestUserRepository(t *testing.T) {
 	})
 
 	t.Run("case=must-get-user-by-username", func(t *testing.T) {
-		sqlite.DB.Exec("DELETE FROM users")
+		cleaner.Clean()
 		username := "abcdef"
 		user := &models.User{
 			Username: username,

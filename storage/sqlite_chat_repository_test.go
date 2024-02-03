@@ -13,10 +13,10 @@ func TestSQLiteChatRepository(t *testing.T) {
 	db := sqlite.SetupDatabase()
 	chatRepository := NewChatRepository(db)
 	userRepository := NewUserRepository(db)
+	cleaner := Cleaner{db}
 
 	t.Run("case=must-save-new-chat-with-users", func(t *testing.T) {
-		sqlite.DB.Exec("DELETE FROM chats")
-		sqlite.DB.Exec("DELETE FROM users")
+		cleaner.Clean()
 		user1 := models.User{
 			ID:       uuid.New(),
 			Username: "111",
@@ -42,8 +42,7 @@ func TestSQLiteChatRepository(t *testing.T) {
 	})
 
 	t.Run("case=must-populate-users-ids-when-passing-only-struct", func(t *testing.T) {
-		sqlite.DB.Exec("DELETE FROM chats")
-		sqlite.DB.Exec("DELETE FROM users")
+		cleaner.Clean()
 		user1 := models.User{
 			ID:       uuid.New(),
 			Username: "111",
@@ -95,8 +94,7 @@ func TestSQLiteChatRepository(t *testing.T) {
 	// })
 
 	t.Run("case=must-not-save-chat-with-non-nullable-fields-as-nil", func(t *testing.T) {
-		sqlite.DB.Exec("DELETE FROM chats")
-		sqlite.DB.Exec("DELETE FROM users")
+		cleaner.Clean()
 		chat := &models.Chat{
 			// User1ID:       uuid.New(),
 			// User2ID:       uuid.New(),
@@ -113,8 +111,7 @@ func TestSQLiteChatRepository(t *testing.T) {
 	})
 
 	t.Run("case=does-not-populate-users-when-passing-only-ids", func(t *testing.T) {
-		sqlite.DB.Exec("DELETE FROM chats")
-		sqlite.DB.Exec("DELETE FROM users")
+		cleaner.Clean()
 		user1 := models.User{
 			Username: "111",
 			Password: "111",
@@ -148,8 +145,7 @@ func TestSQLiteChatRepository(t *testing.T) {
 	// TESTAR FOREIGN KEY -> PASSAR USERID QUE NÃO TEM USER ATRELADO
 
 	t.Run("case=must-list-chats-with-matching-user-id", func(t *testing.T) {
-		sqlite.DB.Exec("DELETE FROM chats")
-		sqlite.DB.Exec("DELETE FROM users")
+		cleaner.Clean()
 		user := models.User{
 			Username: "111",
 			Password: "111",
@@ -199,8 +195,7 @@ func TestSQLiteChatRepository(t *testing.T) {
 	})
 
 	t.Run("case=must-return-empty-list-when-no-chats-are-found-with-matching-user-id", func(t *testing.T) {
-		sqlite.DB.Exec("DELETE FROM chats")
-		sqlite.DB.Exec("DELETE FROM users")
+		cleaner.Clean()
 
 		chats, err := chatRepository.ListByUserID(uuid.New())
 
@@ -214,8 +209,7 @@ func TestSQLiteChatRepository(t *testing.T) {
 	})
 
 	t.Run("case=must-return-chats-with-user-fields-populated", func(t *testing.T) {
-		sqlite.DB.Exec("DELETE FROM chats")
-		sqlite.DB.Exec("DELETE FROM users")
+		cleaner.Clean()
 		user1 := models.User{
 			Username: "111",
 			Password: "111",
@@ -248,8 +242,7 @@ func TestSQLiteChatRepository(t *testing.T) {
 	})
 
 	t.Run("case=must-return-chats-ordered-by-last-message-at", func(t *testing.T) {
-		sqlite.DB.Exec("DELETE FROM chats")
-		sqlite.DB.Exec("DELETE FROM users")
+		cleaner.Clean()
 		userID := uuid.New()
 		timestamp := time.Now()
 		beforeChat := &models.Chat{
@@ -284,8 +277,7 @@ func TestSQLiteChatRepository(t *testing.T) {
 	})
 
 	t.Run("case=must-update-chat", func(t *testing.T) {
-		sqlite.DB.Exec("DELETE FROM chats")
-		sqlite.DB.Exec("DELETE FROM users")
+		cleaner.Clean()
 		userID := uuid.New()
 		timestamp := time.Now()
 		newTimestamp := time.Now()
@@ -322,8 +314,7 @@ func TestSQLiteChatRepository(t *testing.T) {
 	})
 
 	t.Run("case=must-get-chat-by-id", func(t *testing.T) {
-		sqlite.DB.Exec("DELETE FROM chats")
-		sqlite.DB.Exec("DELETE FROM users")
+		cleaner.Clean()
 		chat := &models.Chat{
 			User1ID:       uuid.New(),
 			User2ID:       uuid.New(),

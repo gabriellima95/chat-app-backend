@@ -54,7 +54,7 @@ func TestUserController(t *testing.T) {
 	})
 
 	// t.Run("case=signup-must-return-with-valid-token", func(t *testing.T) {
-	// 	sqlite.DB.Exec("DELETE FROM users")
+	// 	cleaner.Clean()
 	// 	username := "abc"
 	// 	password := "def"
 	// 	jsonMap := map[string]string{"username": username, "password": password}
@@ -89,7 +89,7 @@ func TestUserController(t *testing.T) {
 	// })
 
 	t.Run("case=signup-must-not-save-new-user-with-empty-username", func(t *testing.T) {
-		sqlite.DB.Exec("DELETE FROM users")
+		cleaner.Clean()
 		var b bytes.Buffer
 		user := models.User{
 			Password: "abc",
@@ -109,7 +109,7 @@ func TestUserController(t *testing.T) {
 	})
 
 	t.Run("case=signup-must-not-save-new-user-with-empty-password", func(t *testing.T) {
-		sqlite.DB.Exec("DELETE FROM users")
+		cleaner.Clean()
 		var b bytes.Buffer
 		user := models.User{
 			Username: "abc",
@@ -130,7 +130,7 @@ func TestUserController(t *testing.T) {
 	})
 
 	t.Run("case=signup-must-save-new-user-with-hashed-password", func(t *testing.T) {
-		sqlite.DB.Exec("DELETE FROM users")
+		cleaner.Clean()
 		username := "abc"
 		password := "def"
 		jsonMap := map[string]string{"username": username, "password": password}
@@ -155,7 +155,7 @@ func TestUserController(t *testing.T) {
 	})
 
 	t.Run("case=login-must-generate-token-for-valid-user", func(t *testing.T) {
-		sqlite.DB.Exec("DELETE FROM users")
+		cleaner.Clean()
 		username := "abc"
 		password := "def"
 		user := &models.User{
@@ -202,7 +202,7 @@ func TestUserController(t *testing.T) {
 	})
 
 	t.Run("case=login-must-return-unauthorized-if-passwords-are-different", func(t *testing.T) {
-		sqlite.DB.Exec("DELETE FROM users")
+		cleaner.Clean()
 		username := "abc"
 		user := &models.User{
 			ID:       uuid.New(),
@@ -230,7 +230,7 @@ func TestUserController(t *testing.T) {
 	})
 
 	t.Run("case=login-must-salt-and-hash-password-before-comparing", func(t *testing.T) {
-		sqlite.DB.Exec("DELETE FROM users")
+		cleaner.Clean()
 		username := "abc"
 		password := "def"
 		user := &models.User{
@@ -259,7 +259,7 @@ func TestUserController(t *testing.T) {
 	})
 
 	t.Run("case=login-must-return-bad-request-when-username-is-empty", func(t *testing.T) {
-		sqlite.DB.Exec("DELETE FROM users")
+		cleaner.Clean()
 		var b bytes.Buffer
 		user := models.User{
 			Password: "abc",
@@ -279,7 +279,7 @@ func TestUserController(t *testing.T) {
 	})
 
 	t.Run("case=login-must-return-bad-request-when-password-is-empty", func(t *testing.T) {
-		sqlite.DB.Exec("DELETE FROM users")
+		cleaner.Clean()
 		var b bytes.Buffer
 		user := models.User{
 			Username: "abc",

@@ -215,11 +215,8 @@ func Clear(database string) {
 }
 
 func ClearDB(db *gorm.DB) {
-	db.Exec("DELETE FROM chats")
-	db.Exec("DELETE FROM user_chats")
-	db.Exec("DELETE FROM generic_chats")
-	db.Exec("DELETE FROM users")
-	db.Exec("DELETE FROM messages")
+	cleaner := storage.Cleaner{DB: db}
+	cleaner.Clean()
 }
 
 func hashAndSalt(password string) string {

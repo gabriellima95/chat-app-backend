@@ -14,10 +14,10 @@ func TestPostgresChatRepository(t *testing.T) {
 	db := postgres.SetupDatabase()
 	chatRepository := NewChatRepository(db)
 	userRepository := NewUserRepository(db)
+	cleaner := Cleaner{db}
 
 	t.Run("case=must-save-new-chat-with-users", func(t *testing.T) {
-		postgres.DB.Exec("DELETE FROM chats")
-		postgres.DB.Exec("DELETE FROM users")
+		cleaner.Clean()
 		user1 := models.User{
 			ID:       uuid.New(),
 			Username: "111",
@@ -43,8 +43,7 @@ func TestPostgresChatRepository(t *testing.T) {
 	})
 
 	t.Run("case=must-populate-users-ids-when-passing-only-struct", func(t *testing.T) {
-		postgres.DB.Exec("DELETE FROM chats")
-		postgres.DB.Exec("DELETE FROM users")
+		cleaner.Clean()
 		user1 := models.User{
 			ID:       uuid.New(),
 			Username: "111",
@@ -77,8 +76,7 @@ func TestPostgresChatRepository(t *testing.T) {
 	})
 
 	t.Run("case=returns-error-when-passing-unknown-users-id", func(t *testing.T) {
-		postgres.DB.Exec("DELETE FROM chats")
-		postgres.DB.Exec("DELETE FROM users")
+		cleaner.Clean()
 		chat := &models.Chat{
 			User1ID:       uuid.New(),
 			User2ID:       uuid.New(),
@@ -94,8 +92,7 @@ func TestPostgresChatRepository(t *testing.T) {
 	})
 
 	t.Run("case=must-not-save-chat-with-non-nullable-fields-as-nil", func(t *testing.T) {
-		postgres.DB.Exec("DELETE FROM chats")
-		postgres.DB.Exec("DELETE FROM users")
+		cleaner.Clean()
 		chat := &models.Chat{}
 
 		err := chatRepository.Create(chat)
@@ -107,8 +104,7 @@ func TestPostgresChatRepository(t *testing.T) {
 	})
 
 	t.Run("case=does-not-populate-users-when-passing-only-ids", func(t *testing.T) {
-		postgres.DB.Exec("DELETE FROM chats")
-		postgres.DB.Exec("DELETE FROM users")
+		cleaner.Clean()
 		user1 := models.User{
 			Username: "111",
 			Password: "111",
@@ -142,8 +138,7 @@ func TestPostgresChatRepository(t *testing.T) {
 	// TESTAR FOREIGN KEY -> PASSAR USERID QUE NÃO TEM USER ATRELADO
 
 	t.Run("case=must-list-chats-with-matching-user-id", func(t *testing.T) {
-		postgres.DB.Exec("DELETE FROM chats")
-		postgres.DB.Exec("DELETE FROM users")
+		cleaner.Clean()
 		user1 := models.User{
 			Username: "111",
 			Password: "111",
@@ -203,8 +198,7 @@ func TestPostgresChatRepository(t *testing.T) {
 	})
 
 	t.Run("case=must-return-empty-list-when-no-chats-are-found-with-matching-user-id", func(t *testing.T) {
-		postgres.DB.Exec("DELETE FROM chats")
-		postgres.DB.Exec("DELETE FROM users")
+		cleaner.Clean()
 
 		chats, err := chatRepository.ListByUserID(uuid.New())
 
@@ -218,8 +212,7 @@ func TestPostgresChatRepository(t *testing.T) {
 	})
 
 	t.Run("case=must-return-chats-with-user-fields-populated", func(t *testing.T) {
-		postgres.DB.Exec("DELETE FROM chats")
-		postgres.DB.Exec("DELETE FROM users")
+		cleaner.Clean()
 		user1 := models.User{
 			Username: "111",
 			Password: "111",
@@ -252,8 +245,7 @@ func TestPostgresChatRepository(t *testing.T) {
 	})
 
 	t.Run("case=must-return-chats-ordered-by-last-message-at", func(t *testing.T) {
-		postgres.DB.Exec("DELETE FROM chats")
-		postgres.DB.Exec("DELETE FROM users")
+		cleaner.Clean()
 		user1 := models.User{
 			Username: "111",
 			Password: "111",
@@ -297,8 +289,7 @@ func TestPostgresChatRepository(t *testing.T) {
 	})
 
 	t.Run("case=must-update-chat", func(t *testing.T) {
-		postgres.DB.Exec("DELETE FROM chats")
-		postgres.DB.Exec("DELETE FROM users")
+		cleaner.Clean()
 
 		timestamp := time.Now()
 		newTimestamp := time.Now()
@@ -340,8 +331,7 @@ func TestPostgresChatRepository(t *testing.T) {
 	})
 
 	t.Run("case=must-get-chat-by-id", func(t *testing.T) {
-		postgres.DB.Exec("DELETE FROM chats")
-		postgres.DB.Exec("DELETE FROM users")
+		cleaner.Clean()
 
 		user := models.User{
 			Username: "111",
