@@ -3,6 +3,7 @@ package storage
 import (
 	"msn/pkg/models"
 	"msn/storage/sqlite"
+	"os"
 	"testing"
 	"time"
 
@@ -162,4 +163,9 @@ func TestMessageRepository(t *testing.T) {
 			t.Errorf("Last message in list should be the one with smaller created_at %v", messages)
 		}
 	})
+
+	err := os.Remove("test.db")
+	if err != nil {
+		t.Errorf("Error deleting lcaol db file: %v", err)
+	}
 }

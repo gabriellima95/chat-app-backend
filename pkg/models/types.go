@@ -45,6 +45,17 @@ type Message struct {
 	DeletedAt time.Time
 }
 
+type Attachment struct {
+	// ID        uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();not null;primaryKey"`
+	ID        uuid.UUID `gorm:"not null;default:null;primaryKey"`
+	Path      string    `gorm:"not null;default:null"`
+	MessageID uuid.UUID `gorm:"not null;default:null"`
+	Message   Message   `gorm:"foreignKey:MessageID"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt time.Time
+}
+
 type GenericChat struct {
 	// ID            uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();not null;primaryKey"`
 	ID            uuid.UUID `gorm:"not null;default:null;primaryKey"`
