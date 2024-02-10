@@ -216,12 +216,11 @@ func (m MessageController) ListMessages(w http.ResponseWriter, r *http.Request) 
 	var messageListResponse []MessageResponseSchema
 	for _, message := range messages {
 		m := MessageResponseSchema{
-			ID:         message.ID.String(),
-			CreatedAt:  message.CreatedAt,
-			Content:    message.Content,
-			ChatID:     message.ChatID.String(),
-			SenderID:   message.SenderID.String(),
-			SenderName: message.Sender.Username,
+			ID:        message.ID.String(),
+			CreatedAt: message.CreatedAt,
+			Content:   message.Content,
+			ChatID:    message.ChatID.String(),
+			SenderID:  message.SenderID.String(),
 		}
 		messageListResponse = append(messageListResponse, m)
 	}

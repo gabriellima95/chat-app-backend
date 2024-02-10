@@ -9,12 +9,18 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 
-	"msn/cmd/worker"
 	"msn/pkg/controllers"
+	"msn/pkg/subscribers"
+	"msn/pubsub/goroutine"
 	"msn/storage"
+	"msn/storage/localfiles"
 	"msn/storage/postgres"
 
 	ws "msn/websocket"
+)
+
+const (
+	MessageCreated string = "message-created"
 )
 
 func handleRequests(userController controllers.UserController, chatController controllers.ChatController, messageController controllers.MessageController, dataController controllers.DataController) {
@@ -31,9 +37,10 @@ func handleRequests(userController controllers.UserController, chatController co
 	myRouter.HandleFunc("/{user_id}/generic_chats", chatController.ListGenericChats).Methods("GET")
 	myRouter.HandleFunc("/{chat_id}/messages", messageController.ListMessages).Methods("GET")
 	myRouter.HandleFunc("/messages", messageController.CreateMessage).Methods("POST")
-	myRouter.HandleFunc("/generic_messages", messageController.CreateGenericMessage).Methods("POST")
+	// myRouter.HandleFunc("/generic_messages", messageController.CreateGenericMessage).Methods("POST")
 	myRouter.HandleFunc("/data", dataController.Populate).Methods("POST")
 	myRouter.HandleFunc("/data", dataController.Clear).Methods("DELETE")
+	// headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization", "Access-Control-Allow-Origin"})
 	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})
 	originsOk := handlers.AllowedOrigins([]string{"*"})
 	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
@@ -50,13 +57,19 @@ func Serve() {
 	genericChatRepository := storage.NewGenericChatRepository(db)
 	messageRepository := storage.NewMessageRepository(db)
 	socketNotifier := ws.NewSocketNotifier()
+	localFileStorage := localfiles.NewLocalFileStorage("attachments")
 
-	notificationWorker := worker.NewNotificationWorker(socketNotifier)
-	go notificationWorker.Run()
+	broker := goroutine.NewBroker()
+	uploadAttachmentsSubscriber := subscribers.NewUploadAttachmentsSubscriber(localFileStorage)
+	sendMessageNotificationSubscriber := subscribers.NewSendMessageNotificationSubscriber(socketNotifier, chatRepository)
+	broker.Subscribe(MessageCreated, uploadAttachmentsSubscriber)
+	broker.Subscribe(MessageCreated, sendMessageNotificationSubscriber)
+	publisher := goroutine.NewPublisher(broker)
+	go broker.Broadcast()
 
 	userController := controllers.NewUserController(userRepository, socketNotifier)
 	chatController := controllers.NewChatController(chatRepository, genericChatRepository)
-	messageController := controllers.NewMessageController(messageRepository, chatRepository, genericChatRepository, socketNotifier)
+	messageController := controllers.NewMessageController(messageRepository, chatRepository, genericChatRepository, publisher)
 
 	dataController := controllers.NewDataController(chatRepository, userRepository, messageRepository, genericChatRepository)
 	handleRequests(userController, chatController, messageController, dataController)

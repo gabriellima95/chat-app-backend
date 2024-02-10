@@ -149,7 +149,7 @@ func hashAndSalt(password string) string {
 }
 
 func generateToken(userID string) (string, error) {
-	expirationTime := time.Now().Add(5 * time.Minute)
+	expirationTime := time.Now().Add(1 * time.Hour)
 	claims := &Claims{
 		UserID: userID,
 		StandardClaims: jwt.StandardClaims{

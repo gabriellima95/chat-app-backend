@@ -39,16 +39,22 @@ type GenericChatResponseSchema struct {
 }
 
 type MessageRequestSchema struct {
-	Content  string `json:"content"`
-	ChatID   string `json:"chat_id"`
-	SenderID string `json:"sender_id"`
+	Content     string       `json:"content"`
+	ChatID      string       `json:"chat_id"`
+	SenderID    string       `json:"sender_id"`
+	Attachments []Attachment `json:"attachments"`
+}
+
+type Attachment struct {
+	ContentType string `json:"content_type"`
+	Content     string `json:"content"`
+	Filename    string `json:"filename"`
 }
 
 type MessageResponseSchema struct {
-	ID         string    `json:"id"`
-	CreatedAt  time.Time `json:"created_at"`
-	Content    string    `json:"content"`
-	ChatID     string    `json:"chat_id"`
-	SenderID   string    `json:"sender_id"`
-	SenderName string    `json:"sender_name"`
+	ID        string    `json:"id"`
+	CreatedAt time.Time `json:"created_at"`
+	Content   string    `json:"content"`
+	ChatID    string    `json:"chat_id"`
+	SenderID  string    `json:"sender_id"`
 }

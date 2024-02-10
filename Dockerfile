@@ -1,4 +1,4 @@
-FROM golang:1.17.0-stretch
+FROM golang:1.19
 
 ARG AIR_VERSION=1.27.3
 
