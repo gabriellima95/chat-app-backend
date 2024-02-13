@@ -13,6 +13,7 @@ var Testing bool = false
 
 func SetupDatabase() *gorm.DB {
 	host := "db"
+	// host := "localhost"
 	if Testing {
 		host = "localhost"
 	}

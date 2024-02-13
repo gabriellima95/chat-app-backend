@@ -24,7 +24,8 @@ func TestMessageController(t *testing.T) {
 	chatRepository := storage.NewChatRepository(db)
 	genericChatRepository := storage.NewGenericChatRepository(db)
 	publisherMock := &pubsub.PublisherMock{}
-	messageController := NewMessageController(messageRepository, chatRepository, genericChatRepository, publisherMock)
+	fileStorageClientMock := &storage.FileStorageClientMock{}
+	messageController := NewMessageController(messageRepository, chatRepository, genericChatRepository, publisherMock, fileStorageClientMock)
 
 	t.Run("case=must-create-message", func(t *testing.T) {
 		cleaner.Clean()

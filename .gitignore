@@ -13,7 +13,8 @@
 tmp/
 
 # Local Attachments
-attachments/
+attachments/*
+notes
 
 # SQLite DB
 *.db

@@ -13,8 +13,8 @@ import (
 	"msn/pkg/subscribers"
 	"msn/pubsub/goroutine"
 	"msn/storage"
-	"msn/storage/localfiles"
 	"msn/storage/postgres"
+	"msn/storage/s3"
 
 	ws "msn/websocket"
 )
@@ -57,10 +57,14 @@ func Serve() {
 	genericChatRepository := storage.NewGenericChatRepository(db)
 	messageRepository := storage.NewMessageRepository(db)
 	socketNotifier := ws.NewSocketNotifier()
-	localFileStorage := localfiles.NewLocalFileStorage("attachments")
+	// localFileStorageClient := localfiles.NewLocalFileStorage("attachments")
+	s3Client, err := s3.NewS3Client()
+	if err != nil {
+		panic("Unable to start s3 client")
+	}
 
 	broker := goroutine.NewBroker()
-	uploadAttachmentsSubscriber := subscribers.NewUploadAttachmentsSubscriber(localFileStorage)
+	uploadAttachmentsSubscriber := subscribers.NewUploadAttachmentsSubscriber(s3Client, messageRepository)
 	sendMessageNotificationSubscriber := subscribers.NewSendMessageNotificationSubscriber(socketNotifier, chatRepository)
 	broker.Subscribe(MessageCreated, uploadAttachmentsSubscriber)
 	broker.Subscribe(MessageCreated, sendMessageNotificationSubscriber)
@@ -69,7 +73,7 @@ func Serve() {
 
 	userController := controllers.NewUserController(userRepository, socketNotifier)
 	chatController := controllers.NewChatController(chatRepository, genericChatRepository)
-	messageController := controllers.NewMessageController(messageRepository, chatRepository, genericChatRepository, publisher)
+	messageController := controllers.NewMessageController(messageRepository, chatRepository, genericChatRepository, publisher, s3Client)
 
 	dataController := controllers.NewDataController(chatRepository, userRepository, messageRepository, genericChatRepository)
 	handleRequests(userController, chatController, messageController, dataController)

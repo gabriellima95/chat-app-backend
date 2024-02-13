@@ -29,7 +29,7 @@ func (r MessageRepository) SaveAttachment(attachment *models.Attachment) error {
 
 func (r MessageRepository) ListByChatID(id uuid.UUID) ([]models.Message, error) {
 	var messages []models.Message
-	err := r.DB.Preload("Sender").Where("chat_id = ?", id.String()).Order("created_at desc").Find(&messages).Error
+	err := r.DB.Preload("Sender").Preload("Attachments").Where("chat_id = ?", id.String()).Order("created_at desc").Find(&messages).Error
 	if err != nil {
 		return nil, err
 	}

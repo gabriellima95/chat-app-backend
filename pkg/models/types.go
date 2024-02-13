@@ -35,14 +35,15 @@ type Chat struct {
 
 type Message struct {
 	// ID        uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();not null;primaryKey"`
-	ID        uuid.UUID `gorm:"not null;default:null;primaryKey"`
-	Content   string    `gorm:"not null;default:null"`
-	ChatID    uuid.UUID `gorm:"not null;default:null"`
-	SenderID  uuid.UUID `gorm:"not null;default:null"`
-	Sender    User      `gorm:"foreignKey:SenderID"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt time.Time
+	ID          uuid.UUID `gorm:"not null;default:null;primaryKey"`
+	Content     string    `gorm:"not null;default:null"`
+	ChatID      uuid.UUID `gorm:"not null;default:null"`
+	SenderID    uuid.UUID `gorm:"not null;default:null"`
+	Attachments []Attachment
+	Sender      User `gorm:"foreignKey:SenderID"`
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+	DeletedAt   time.Time
 }
 
 type Attachment struct {

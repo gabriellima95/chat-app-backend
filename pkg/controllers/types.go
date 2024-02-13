@@ -52,9 +52,15 @@ type Attachment struct {
 }
 
 type MessageResponseSchema struct {
-	ID        string    `json:"id"`
-	CreatedAt time.Time `json:"created_at"`
-	Content   string    `json:"content"`
-	ChatID    string    `json:"chat_id"`
-	SenderID  string    `json:"sender_id"`
+	ID          string               `json:"id"`
+	CreatedAt   time.Time            `json:"created_at"`
+	Content     string               `json:"content"`
+	ChatID      string               `json:"chat_id"`
+	SenderID    string               `json:"sender_id"`
+	Attachments []AttachmentResponse `json:"attachments"`
+}
+
+type AttachmentResponse struct {
+	Url      string `json:"url"`
+	Filename string `json:"filename"`
 }

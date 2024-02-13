@@ -24,3 +24,7 @@ services:
       - "8080:8080/tcp"
     volumes:
       - .:/app
+      - $HOME/.aws/credentials:/root/.aws/credentials:ro
+    environment:
+      - AWS_PROFILE=default
+

@@ -16,6 +16,7 @@ func (c Cleaner) Clean() {
 	c.DB.Exec("DELETE FROM chats")
 	c.DB.Exec("DELETE FROM user_chats")
 	c.DB.Exec("DELETE FROM generic_chats")
+	c.DB.Exec("DELETE FROM attachments")
 	c.DB.Exec("DELETE FROM messages")
 	c.DB.Exec("DELETE FROM users")
 }
