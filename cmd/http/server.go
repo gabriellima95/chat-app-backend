@@ -9,6 +9,7 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 
+	"msn/config"
 	"msn/pkg/controllers"
 	"msn/pkg/subscribers"
 	"msn/pubsub/goroutine"
@@ -50,7 +51,7 @@ func handleRequests(userController controllers.UserController, chatController co
 }
 
 func Serve() {
-
+	config.Load()
 	db := postgres.SetupDatabase()
 	userRepository := storage.NewUserRepository(db)
 	chatRepository := storage.NewChatRepository(db)
@@ -64,7 +65,7 @@ func Serve() {
 	}
 
 	broker := goroutine.NewBroker()
-	uploadAttachmentsSubscriber := subscribers.NewUploadAttachmentsSubscriber(s3Client, messageRepository)
+	uploadAttachmentsSubscriber := subscribers.NewUploadAttachmentsSubscriber(s3Client, messageRepository, socketNotifier)
 	sendMessageNotificationSubscriber := subscribers.NewSendMessageNotificationSubscriber(socketNotifier, chatRepository)
 	broker.Subscribe(MessageCreated, uploadAttachmentsSubscriber)
 	broker.Subscribe(MessageCreated, sendMessageNotificationSubscriber)

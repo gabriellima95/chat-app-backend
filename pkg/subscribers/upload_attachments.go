@@ -6,6 +6,7 @@ import (
 	"msn/pkg/models"
 	"msn/pubsub"
 	"msn/storage"
+	"msn/websocket"
 
 	"github.com/google/uuid"
 )
@@ -13,12 +14,14 @@ import (
 type UploadAttachmentsSubscriber struct {
 	fileStorage       storage.FileStorageClient
 	messageRepository storage.MessageRepository
+	notifier          websocket.Notifier
 }
 
-func NewUploadAttachmentsSubscriber(fileStorage storage.FileStorageClient, messageRepository storage.MessageRepository) UploadAttachmentsSubscriber {
+func NewUploadAttachmentsSubscriber(fileStorage storage.FileStorageClient, messageRepository storage.MessageRepository, notifier websocket.Notifier) UploadAttachmentsSubscriber {
 	return UploadAttachmentsSubscriber{
 		fileStorage:       fileStorage,
 		messageRepository: messageRepository,
+		notifier:          notifier,
 	}
 }
 
@@ -71,6 +74,22 @@ func (s UploadAttachmentsSubscriber) Run(msg pubsub.Message) error {
 		if err != nil {
 			log.Printf("Error on messageRepository.SaveAttachment: %s", err.Error())
 		}
+
+		url, err := s.fileStorage.GeneratePresignedURL(filepath, 60)
+		if err != nil {
+			log.Printf("Error on fileStorage.GeneratePresignedURL: %s", err.Error())
+		}
+
+		notification := websocket.AttachmentNotification{
+			MessageID:     request.ID,
+			AttachmentURL: url,
+		}
+
+		err = s.notifier.NotifyAttachment(notification, request.SenderID)
+		if err != nil {
+			log.Printf("Error on notifier.NotifyAttachment: %s", err.Error())
+		}
+
 	}
 	return nil
 }

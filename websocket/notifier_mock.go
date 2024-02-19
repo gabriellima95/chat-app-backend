@@ -20,3 +20,7 @@ func (n *NotifierMock) NotifyMessage(message MessageNotification, userID string)
 	}
 	return nil
 }
+
+func (n *NotifierMock) NotifyAttachment(message AttachmentNotification, userID string) error {
+	return nil
+}

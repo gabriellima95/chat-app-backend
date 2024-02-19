@@ -5,6 +5,11 @@ type Subscriber interface {
 	Name() string
 }
 
+type Subscription interface {
+	Run(msg Message) error
+	Name() string
+}
+
 type Publisher interface {
 	Publish(msg Message) error
 }

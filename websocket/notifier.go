@@ -21,6 +21,11 @@ type MessageNotification struct {
 	SenderName  string
 }
 
+type AttachmentNotification struct {
+	MessageID     string
+	AttachmentURL string
+}
+
 // messageMap["id"] = message.ID.String()
 // messageMap["chat_id"] = message.ChatID.String()
 // messageMap["sender_id"] = message.SenderID.String()
@@ -31,6 +36,7 @@ type MessageNotification struct {
 type Notifier interface {
 	NotifyMessage(message MessageNotification, userID string) error
 	AddConnection(w http.ResponseWriter, r *http.Request, userID uuid.UUID)
+	NotifyAttachment(attachment AttachmentNotification, userID string) error
 }
 
 type SocketNotifier struct {
@@ -62,6 +68,29 @@ func (s *SocketNotifier) AddConnection(w http.ResponseWriter, r *http.Request, u
 	}
 	userIDstr := userID.String()
 	s.connPool[userIDstr] = conn
+}
+
+func (s *SocketNotifier) NotifyAttachment(attachment AttachmentNotification, userID string) error {
+	fmt.Println("NotifyAttachment", s.connPool)
+
+	conn, ok := s.connPool[userID]
+	if !ok {
+		return fmt.Errorf("user-socket-not-connected")
+	}
+
+	attachmentMap := make(map[string]interface{})
+	attachmentMap["message_id"] = attachment.MessageID
+	attachmentMap["url"] = attachment.AttachmentURL
+
+	jsonStr, _ := json.Marshal(attachmentMap)
+
+	err := conn.WriteMessage(websocket.TextMessage, []byte(jsonStr))
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	fmt.Println("Chegou e deu bom")
+	return nil
 }
 
 func (s *SocketNotifier) NotifyMessage(message MessageNotification, userID string) error {

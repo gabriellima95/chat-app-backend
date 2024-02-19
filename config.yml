@@ -1,0 +1,15 @@
+development:
+  DB_TYPE: postgres
+  DB_HOST: localhost
+  DB_PORT: 5432
+  DB_NAME: chat
+  DB_USER: root
+  DB_PASSWORD: root
+
+test:
+  DB_TYPE: postgres
+  DB_HOST: localhost
+  DB_PORT: 5432
+  DB_NAME: chat_test
+  DB_USER: root
+  DB_PASSWORD: root
